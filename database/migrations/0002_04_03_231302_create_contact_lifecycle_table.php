@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('contact_id')->constrained()->cascadeOnDelete();
             $table->foreignId('lifecycle_stage_id')->constrained()->cascadeOnDelete();
+            $table->string('status')->default('active');
             $table->timestamp('started_at')->useCurrent();
             $table->timestamp('ended_at')->nullable();
             $table->text('notes')->nullable();

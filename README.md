@@ -1,3 +1,89 @@
+## TODO: Add a WalkMe-like User Guidance Feature to a WF
+
+## Objective
+
+Create a user guidance system within a Laravel Filament project to help users navigate and understand features through interactive, step-by-step tours or tooltips, similar to WalkMe.
+
+---
+
+## Step 1: Define Requirements
+
+-   **Purpose**: Guide users through key features (e.g., creating a resource, navigating the dashboard, using forms).
+-   **Features**:
+    -   Step-by-step tours with popups/tooltips.
+    -   Ability to highlight UI elements.
+    -   Dismissible and skippable tours.
+    -   Persistent state (e.g., mark tour as completed per user).
+-   **Scope**: Focus on the Filament admin panel (e.g., `/admin` route).
+-   **Target Audience**: New users or users exploring new features.
+
+---
+
+## Step 2: Technology Stack
+
+-   **Backend**: Laravel (for managing tour data and user progress).
+-   **Frontend**:
+    -   Filament’s Livewire for reactivity.
+    -   JavaScript library like [Intro.js](https://introjs.com/) or [Shepherd.js](https://shepherdjs.dev/) for the tour UI.
+    -   Tailwind CSS (already used by Filament) for styling.
+-   **Database**: Store tour steps and user completion status.
+
+---
+
+## Step 3: Setup and Installation
+
+1. **Install Laravel and Filament (if not already done)**:
+
+    - Ensure you have a working Laravel project with Filament installed (`composer require filament/filament:^3.2-stable -W`).
+    - Run `php artisan filament:install --panels` to set up the admin panel.
+
+2. **Install a JavaScript Tour Library**:
+
+    - For this plan, we’ll use **Shepherd.js** due to its flexibility and modern design.
+    - Install via npm:
+        ```bash
+        npm install shepherd.js
+        ```
+    - Include it in your Filament assets (e.g., `resources/js/app.js`).
+
+3. **Configure Tailwind CSS**:
+    - Filament already uses Tailwind, so ensure your `tailwind.config.js` includes Shepherd.js styles if needed:
+        ```javascript
+        module.exports = {
+            content: [
+                "./resources/**/*.blade.php",
+                "./vendor/filament/**/*.blade.php",
+                "./node_modules/shepherd.js/dist/**/*.js",
+            ],
+        };
+        ```
+
+---
+
+## Step 4: Database Design
+
+-   **Tours Table**: Store tour metadata.
+
+    ```php
+    Schema::create('tours', function (Blueprint $table) {
+        $table->id();
+        $table->string('name')->unique(); // e.g., "dashboard_tour"
+        $table->json('steps'); // Store steps as JSON
+        $table->timestamps();
+    });
+    ```
+
+-   **User Tour Progress Table**: Track user progress.
+    ```php
+    Schema::create('user_tour_progress', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+        $table->foreignId('tour_id')->constrained()->cascadeOnDelete();
+        $table->boolean('completed')->default(false);
+        $table->timestamps();
+    });
+    ```
+
 # Larament
 
 [![Pint](https://github.com/codewithdennis/larament/actions/workflows/pint.yml/badge.svg)](https://packagist.org/packages/codewithdennis/larament)
@@ -14,14 +100,16 @@
 
 ## Table of Contents
 
-- [Features](#features)
-  - [Security and Testing](#security-and-testing)
-  - [Quality of Life](#quality-of-life)
-  - [Design](#design)
-- [Default User](#default-user)
-- [Included Packages](#included-packages)
-- [Installation](#installation)
-  - [CLI Installation](#cli-installation)
+-   [Features](#features)
+    -   [Security and Testing](#security-and-testing)
+    -   [Quality of Life](#quality-of-life)
+    -   [Design](#design)
+-   [Default User](#default-user)
+-   [Included Packages](#included-packages)
+-   [Installation](#installation)
+    -   [Development Environment Setup](#development-environment-setup)
+    -   [Using the Template](#using-the-template)
+    -   [CLI Installation](#cli-installation)
 
 ---
 
@@ -29,33 +117,66 @@
 
 ### Security and Testing
 
-- **PESTPHP**: Preconfigured with test cases for streamlined testing. ([Learn more](https://pestphp.com/docs/installation))
-- **Strict mode enabled** via [Should Be Strict](https://laravel-news.com/shouldbestrict):
-  - Prevents lazy loading (N+1 queries).
-  - Guards against discarding or accessing missing attributes.
-- **Production safeguards**: Prevents destructive commands in production. ([Learn more](https://laravel-news.com/prevent-destructive-commands-from-running-in-laravel-11))
-- **Architectural testing** with Archtest.
-- **Static analysis** using PHPStan.
-- **Debugging** with Laravel Debugbar.
+-   **PESTPHP**: Preconfigured with test cases for streamlined testing. ([Learn more](https://pestphp.com/docs/installation))
+-   **Strict mode enabled** via [Should Be Strict](https://laravel-news.com/shouldbestrict):
+    -   Prevents lazy loading (N+1 queries).
+    -   Guards against discarding or accessing missing attributes.
+-   **Production safeguards**: Prevents destructive commands in production. ([Learn more](https://laravel-news.com/prevent-destructive-commands-from-running-in-laravel-11))
+-   **Architectural testing** with Archtest.
+-   **Static analysis** using PHPStan.
+-   **Debugging** with Laravel Debugbar.
 
 ### Quality of Life
 
-- Custom login page autofills email and password with seeded data for quicker testing.
-- Built-in password generator action on the user profile and user resource pages.
-- Enhanced global search includes email addresses for better discoverability.
-- Auto-translatable component labels.
-- `composer review`: A single command to run Pint, PHPStan, and PEST.
-- Helper functions available through a dedicated helper file.
-- Custom `php artisan make:filament-action` command for generating Filament actions.
+-   Custom login page autofills email and password with seeded data for quicker testing.
+-   Built-in password generator action on the user profile and user resource pages.
+-   Enhanced global search includes email addresses for better discoverability.
+-   Auto-translatable component labels.
+-   `composer review`: A single command to run Pint, PHPStan, and PEST.
+-   Helper functions available through a dedicated helper file.
+-   Custom `php artisan make:filament-action` command for generating Filament actions.
 
 ### Design
+
 ![User Global Search](https://raw.githubusercontent.com/CodeWithDennis/larament/main/resources/images/user-global-search.jpg)
 
-- Filament Panel's primary color is preset to blue.
-- Single Page Application (SPA) mode enabled by default.
-- Global search keybinding set to `CTRL + K` or `CMD + K`.
-- A ready-to-use FilamentPHP custom theme, including a sidebar separator.
-- Enhanced profile page with a built-in password generator.
+-   Filament Panel's primary color is preset to blue.
+-   Single Page Application (SPA) mode enabled by default.
+-   Global search keybinding set to `CTRL + K` or `CMD + K`.
+-   A ready-to-use FilamentPHP custom theme, including a sidebar separator.
+-   Enhanced profile page with a built-in password generator.
+
+---
+
+## API Authentication
+
+The project includes Laravel Sanctum for API authentication. Here's how to use it:
+
+### Login and Get Token
+
+```bash
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "your@email.com", "password": "password", "device_name": "test"}'
+```
+
+### Using the Token
+
+Add the token to your requests using the Bearer authentication scheme:
+
+```bash
+curl -X GET http://localhost:8000/api/user \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Accept: application/json"
+```
+
+### Logout
+
+```bash
+curl -X POST http://localhost:8000/api/logout \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -H "Accept: application/json"
+```
 
 ---
 
@@ -73,19 +194,74 @@ DEFAULT_USER_PASSWORD="password"
 
 The following packages are pre-installed:
 
-- [timokoerber/laravel-one-time-operations](https://github.com/TimoKoerber/laravel-one-time-operations)
-- [barryvdh/laravel-debugbar](https://github.com/barryvdh/laravel-debugbar)
-- [phpstan/phpstan](https://phpstan.org/user-guide/getting-started)
-- [pestphp/pest](https://pestphp.com/docs/installation)
-  - [pestphp/pest-plugin-faker](https://pestphp.com/docs/plugins#faker)
-  - [pestphp/pest-plugin-laravel](https://pestphp.com/docs/plugins#laravel)
-  - [pestphp/pest-plugin-livewire](https://pestphp.com/docs/plugins#livewire)
+-   [timokoerber/laravel-one-time-operations](https://github.com/TimoKoerber/laravel-one-time-operations)
+-   [barryvdh/laravel-debugbar](https://github.com/barryvdh/laravel-debugbar)
+-   [phpstan/phpstan](https://phpstan.org/user-guide/getting-started)
+-   [pestphp/pest](https://pestphp.com/docs/installation)
+    -   [pestphp/pest-plugin-faker](https://pestphp.com/docs/plugins#faker)
+    -   [pestphp/pest-plugin-laravel](https://pestphp.com/docs/plugins#laravel)
+    -   [pestphp/pest-plugin-livewire](https://pestphp.com/docs/plugins#livewire)
 
 ## Installation
+
+### Development Environment Setup
+
+1. Clone the repository to your local machine:
+
+```bash
+git clone <repository-url>
+cd <project-directory>
+```
+
+2. Install PHP dependencies:
+
+```bash
+composer install
+```
+
+3. Install and build frontend assets:
+
+```bash
+npm install
+npm run build
+```
+
+4. Set up the environment:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+5. Set up the database:
+
+```bash
+php artisan migrate:refresh --seed
+php artisan db:seed --class=MediaSeeder
+```
+
+6. Create a Filament admin user:
+
+```bash
+php artisan filament:user
+```
+
+This will prompt you to enter an email and password for the admin user.
+
+7. Start the development server:
+
+```bash
+php artisan serve
+```
+
+You can now access the application at http://localhost:8000 and the admin panel at http://localhost:8000/admin.
+
 ### Using the Template
-- Create a repository using the Larament template.
-- Clone your repository to your local machine.
- Navigate to the project directory and run the following commands:
+
+-   Create a repository using the Larament template.
+-   Clone your repository to your local machine.
+    Navigate to the project directory and run the following commands:
+
 ```bash
 composer install
 npm install && npm run build
@@ -96,6 +272,7 @@ php artisan db:seed
 ```
 
 ### CLI Installation
+
 Alternatively, you can use the following command to create a new project with Larament:
 
 ```bash
@@ -103,6 +280,7 @@ composer create-project --prefer-dist CodeWithDennis/larament example-app
 ```
 
 ### Create a Terminal Alias
+
 For easier usage in future projects, create an alias in your terminal:
 
 ```bash
@@ -113,4 +291,3 @@ Now, you can create a new project with a simple command:
 
 ```bash
 larament my-cool-app
-```

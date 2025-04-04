@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Cache;
 
 trait SharesContactFilters
 {
-    public static ?string $filter = '30days';
+    public static ?string $contactFilter = '30days';
     public static ?string $grouping = 'day';
 
     public function updatedFilter($value)
     {
-        static::$filter = $value;
+        static::$contactFilter = $value;
         Cache::put('contact_widget_filter', $value, now()->addDay());
         $this->refreshOtherWidgets();
     }
@@ -31,13 +31,13 @@ trait SharesContactFilters
 
     public function mount(): void
     {
-        static::$filter = Cache::get('contact_widget_filter', '30days');
+        static::$contactFilter = Cache::get('contact_widget_filter', '30days');
         static::$grouping = Cache::get('contact_widget_grouping', 'day');
     }
 
     protected function getFilter(): string
     {
-        return static::$filter;
+        return static::$contactFilter;
     }
 
     protected function getGrouping(): string
