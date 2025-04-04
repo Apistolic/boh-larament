@@ -4,6 +4,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\App\Profile;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Widgets\TouchesByLifecycleWidget;
+use App\Filament\Widgets\WorkflowsByLifecycleWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -30,8 +32,12 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->passwordReset()
+            ->brandName('Bridge of Hope Engagement')
+            ->brandLogo(asset('boh-hbg-green-gold.svg')) 
+            ->darkModebrandLogo(asset('boh-hbg-white-gold.svg')) 
+	    ->favicon(asset('boh-gold.svg'))
             ->sidebarCollapsibleOnDesktop()
-//            ->sidebarFullyCollapsibleOnDesktop()
+            ->sidebarFullyCollapsibleOnDesktop()
             ->spa()
             ->profile(Profile::class, false)
             ->viteTheme('resources/css/filament/admin/theme.css')
@@ -49,6 +55,8 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                TouchesByLifecycleWidget::class,
+                WorkflowsByLifecycleWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

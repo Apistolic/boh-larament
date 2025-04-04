@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Contact;
+use App\Observers\ContactObserver;
+use App\Support\CollectionMacros;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Placeholder;
 use Filament\Infolists\Components\Entry;
@@ -46,5 +49,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureCommands();
         $this->configureModels();
         $this->translatableComponents();
+        Contact::observe(ContactObserver::class);
+        CollectionMacros::register();
     }
 }

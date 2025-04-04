@@ -1,0 +1,7 @@
+first_name,last_name,email,phone,mobile_phone,company,job_title,department,street_address,city,state,postal_code,country,linkedin_url,twitter_url,facebook_url,lead_source,lifecycle_stage,notes
+John,Donor,john.donor@example.com,5551234567,5559876543,Charity Corp,Director,Philanthropy,123 Giving St,Donorville,CA,90210,USA,https://linkedin.com/in/johndonor,,,referral,"donor,donor_influencer","Major donor since 2020"
+Sarah,Retired,sarah.retired@example.com,,5552345678,Past Charity,Former CEO,,456 Legacy Ave,Retiredtown,NY,10001,USA,,,,"social_media","donor_retired","Previous major contributor"
+Mike,Neighbor,mike.neighbor@example.com,,5553456789,Community Org,Volunteer Lead,Outreach,789 Helper St,Neighborton,TX,75001,USA,,,volunteer_program,"neighbor_leader,neighbor_influencer","Active community leader"
+Lisa,Graduate,lisa.graduate@example.com,5554567890,5555678901,Family First,Program Alumni,,321 Success Dr,Gradtown,FL,33101,USA,,,program_referral,"mom_graduate","Successfully completed program in 2024"
+Tom,Candidate,tom.candidate@example.com,,5556789012,Potential Inc,Manager,Sales,654 Prospect Ln,Newville,WA,98101,USA,https://linkedin.com/in/tomcandidate,,website,"donor_candidate","Interested in supporting our mission"
+Maria,MultiRole,maria.multi@example.com,5557890123,5558901234,Community Plus,Executive Director,Leadership,987 Integration Rd,Multitown,IL,60601,USA,https://linkedin.com/in/mariamulti,,multiple_engagement,"donor_influencer,neighbor_leader,mom_graduate","Active in multiple programs"
