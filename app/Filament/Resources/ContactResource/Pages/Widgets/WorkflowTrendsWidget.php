@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ContactResource\Pages\Widgets;
 
+use App\Filament\Resources\ContactResource\Pages\Widgets\Concerns\SharesContactFilters;
 use App\Models\WorkflowExecution;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
@@ -9,22 +10,33 @@ use Illuminate\Support\Facades\DB;
 
 class WorkflowTrendsWidget extends ChartWidget
 {
+    use SharesContactFilters;
+
     protected static ?string $heading = 'Workflow Activity';
     protected static ?string $maxHeight = '200px';
     protected static ?string $pollingInterval = null;
-
-    public ?string $filter = 'month';
     
     public $record;
 
     protected function getData(): array
     {
-        $startDate = now()->subMonths(3)->startOfDay();
+        $startDate = match($this->getFilter()) {
+            '7days' => now()->subDays(7)->startOfDay(),
+            '30days' => now()->subDays(30)->startOfDay(),
+            '90days' => now()->subDays(90)->startOfDay(),
+            default => now()->subDays(30)->startOfDay(),
+        };
         $endDate = now()->endOfDay();
-
+        
+        $dateFormat = match($this->getGrouping()) {
+            'week' => 'DATE(DATE_SUB(created_at, INTERVAL WEEKDAY(created_at) DAY))',
+            'month' => 'DATE_FORMAT(created_at, "%Y-%m-01")',
+            default => 'DATE(created_at)', // day
+        };
+        
         $executions = $this->record->workflowExecutions()
             ->select([
-                DB::raw('DATE(created_at) as date'),
+                DB::raw("$dateFormat as date"),
                 DB::raw('COUNT(*) as count'),
                 'status',
                 'workflow_id'
@@ -32,14 +44,24 @@ class WorkflowTrendsWidget extends ChartWidget
             ->with('workflow:id,name')
             ->where('created_at', '>=', $startDate)
             ->where('created_at', '<=', $endDate)
-            ->groupBy('date', 'status', 'workflow_id')
+            ->groupBy(DB::raw($dateFormat), 'status', 'workflow_id')
             ->orderBy('date')
             ->get();
 
         $dates = collect();
         $current = $startDate->copy();
+        
         while ($current <= $endDate) {
-            $dates->push($current->format('Y-m-d'));
+            $date = match($this->getGrouping()) {
+                'week' => $current->startOfWeek()->format('Y-m-d'),
+                'month' => $current->startOfMonth()->format('Y-m-d'),
+                default => $current->format('Y-m-d'),
+            };
+            
+            if (!$dates->contains($date)) {
+                $dates->push($date);
+            }
+            
             $current->addDay();
         }
 
@@ -56,6 +78,11 @@ class WorkflowTrendsWidget extends ChartWidget
                         ->where('status', $status)
                         ->sum('count');
                 })->toArray();
+
+                // Skip empty datasets
+                if (!array_sum($data)) {
+                    continue;
+                }
 
                 $baseColor = match($status) {
                     'completed' => '75, 192, 192',  // Green
@@ -75,8 +102,17 @@ class WorkflowTrendsWidget extends ChartWidget
             }
         }
 
+        $formatLabel = function($date) {
+            $carbon = Carbon::parse($date);
+            return match($this->getGrouping()) {
+                'week' => $carbon->format('M j') . ' - ' . $carbon->endOfWeek()->format('M j'),
+                'month' => $carbon->format('M Y'),
+                default => $carbon->format('M j'),
+            };
+        };
+
         return [
-            'labels' => $dates->map(fn($date) => Carbon::parse($date)->format('M j'))->toArray(),
+            'labels' => $dates->map($formatLabel)->toArray(),
             'datasets' => $datasets,
         ];
     }
