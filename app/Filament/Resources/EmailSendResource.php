@@ -14,7 +14,7 @@ class EmailSendResource extends Resource
 {
     protected static ?string $model = EmailSend::class;
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
-    protected static ?string $navigationGroup = 'Touches';
+    protected static ?string $navigationGroup = 'Engagement';
     protected static ?int $navigationSort = 95;
 
     public static function table(Table $table): Table

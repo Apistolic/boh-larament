@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Contact;
+use App\Models\LifecycleStage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ContactFactory extends Factory
@@ -23,10 +24,23 @@ class ContactFactory extends Factory
             'state_code' => $this->faker->stateAbbr(),
             'postal_code' => $this->faker->postcode(),
             'country' => 'USA',
-            'lifecycle_stage' => $this->faker->randomElement(array_keys(Contact::LIFECYCLE_STAGES)),
             'notes' => $this->faker->optional(0.7)->paragraph(),
             'source' => $this->faker->randomElement(['website', 'referral', 'event', 'social_media', 'direct']),
             'last_touched_at' => $this->faker->optional(0.8)->dateTimeThisYear(),
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (Contact $contact) {
+            // Attach a random lifecycle stage
+            $stage = LifecycleStage::inRandomOrder()->first();
+            if ($stage) {
+                $contact->lifecycleStages()->attach($stage->id, [
+                    'status' => 'active',
+                    'started_at' => now(),
+                ]);
+            }
+        });
     }
 }

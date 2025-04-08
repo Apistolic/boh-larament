@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('media', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('name')->nullable();
-        //     $table->string('file_name')->nullable();
-        //     $table->string('mime_type')->nullable();
-        //     $table->integer('size')->nullable();
-        //     $table->string('collection')->nullable();
-        //     $table->string('disk')->nullable();
-        //     $table->timestamps();
-        // });
+        Schema::create('media', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->string('file_name')->nullable();
+            $table->string('mime_type')->nullable();
+            $table->integer('size')->nullable();
+            $table->string('collection')->nullable();
+            $table->string('disk')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-//        Schema::dropIfExists('media');
+        Schema::dropIfExists('media');
     }
 };

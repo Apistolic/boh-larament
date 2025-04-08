@@ -13,13 +13,13 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class TemplateResource extends Resource
+class TouchTemplateResource extends Resource
 {
     protected static ?string $model = TouchTemplate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
-    protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 81;
+    protected static ?string $navigationGroup = 'Templates';
+    protected static ?int $navigationSort = 71;
 
     public static function form(Form $form): Form
     {
@@ -151,7 +151,13 @@ class TemplateResource extends Resource
             'index' => Pages\ListTouchTemplates::route('/'),
             'create' => Pages\CreateTouchTemplate::route('/create'),
             'edit' => Pages\EditTouchTemplate::route('/{record}/edit'),
-            'test' => Pages\ViewTestTemplate::route('/{record}/test'),
+            'test' => Pages\ViewTestTouchTemplate::route('/{record}/test'),
         ];
+    }
+
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

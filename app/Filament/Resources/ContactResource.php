@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ContactResource\Pages;
 use App\Filament\Resources\ContactResource\RelationManagers;
 use App\Models\Contact;
+use App\Models\LifecycleStage;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,6 +16,7 @@ use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 
 class ContactResource extends Resource
 {
@@ -22,7 +24,7 @@ class ContactResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Touches';
+    protected static ?string $navigationGroup = 'Engagement';
 
     protected static ?int $navigationSort = 1;
 
@@ -131,10 +133,16 @@ class ContactResource extends Resource
                     ->searchable(query: function ($query, $search) {
                         return $query->where('phone', 'like', '%' . preg_replace('/[^0-9]/', '', $search) . '%');
                     }),
-                Tables\Columns\TextColumn::make('lifecycleStages.name')
+                Tables\Columns\TagsColumn::make('lifecycleStages')
+                    ->getStateUsing(fn ($record) => $record->lifecycleStages->pluck('name'))
                     ->badge()
-                    ->color(fn ($record) => $record->lifecycleStages->first()?->effective_color ?? 'gray')
-                    ->separator(',')
+                    ->color(fn ($state) => match (true) {
+                        str_contains($state, 'Donor') => 'success',
+                        str_contains($state, 'Gala') => 'info',
+                        str_contains($state, 'Neighbor') => 'warning',
+                        str_contains($state, 'Mom') => 'danger',
+                        default => 'gray'
+                    })
                     ->searchable(['lifecycle_stages.name', 'lifecycle_categories.name'])
                     ->sortable()
                     ->toggleable(),
@@ -148,7 +156,19 @@ class ContactResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('lifecycle_stage')
-                    ->options(Contact::LIFECYCLE_STAGES),
+                    ->relationship('lifecycleStages', 'name')
+                    ->multiple()
+                    ->preload(),
+                Tables\Filters\Filter::make('donor')
+                    ->query(fn (Builder $query): Builder => $query->whereHas('lifecycleStages', fn ($q) => $q->where('name', 'like', 'Donor%')->where('name', 'not like', '%Candidate%'))),
+                Tables\Filters\Filter::make('donor_candidate')
+                    ->query(fn (Builder $query): Builder => $query->whereHas('lifecycleStages', fn ($q) => $q->where('name', 'like', 'Donor Candidate%'))),
+                Tables\Filters\Filter::make('neighbor')
+                    ->query(fn (Builder $query): Builder => $query->whereHas('lifecycleStages', fn ($q) => $q->where('name', 'like', 'Neighbor%')->where('name', 'not like', '%Candidate%'))),
+                Tables\Filters\Filter::make('mom')
+                    ->query(fn (Builder $query): Builder => $query->whereHas('lifecycleStages', fn ($q) => $q->where('name', 'like', 'Mom%')->where('name', 'not like', '%Candidate%'))),
+                Tables\Filters\Filter::make('candidate')
+                    ->query(fn (Builder $query): Builder => $query->whereHas('lifecycleStages', fn ($q) => $q->where('name', 'like', '%Candidate%'))),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -156,6 +176,49 @@ class ContactResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('addLifecycleStages')
+                        ->label('Add Lifecycle Stage')
+                        ->icon('heroicon-m-plus')
+                        ->color('success')
+                        ->form([
+                            Forms\Components\Select::make('lifecycle_stages')
+                                ->label('Lifecycle Stages')
+                                ->relationship('lifecycleStages', 'name')
+                                ->multiple()
+                                ->preload()
+                                ->searchable()
+                                ->required()
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $stages = LifecycleStage::whereIn('id', $data['lifecycle_stages'])->get();
+                            $records->each(function (Contact $contact) use ($stages) {
+                                $contact->lifecycleStages()->syncWithoutDetaching($stages);
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    Tables\Actions\BulkAction::make('removeLifecycleStages')
+                        ->label('Remove Lifecycle Stage')
+                        ->icon('heroicon-m-minus')
+                        ->color('danger')
+                        ->form([
+                            Forms\Components\Select::make('lifecycle_stages')
+                                ->label('Lifecycle Stages')
+                                ->relationship('lifecycleStages', 'name')
+                                ->multiple()
+                                ->preload()
+                                ->searchable()
+                                ->required()
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $stages = LifecycleStage::whereIn('id', $data['lifecycle_stages'])->get();
+                            $records->each(function (Contact $contact) use ($stages) {
+                                $contact->lifecycleStages()->detach($stages);
+                            });
+                        })
+                        ->deselectRecordsAfterCompletion()
+                        ->requiresConfirmation(),
+
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
@@ -165,15 +228,15 @@ class ContactResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Basic Information')
+                Infolists\Components\Section::make('Contact Information')
                     ->schema([
-                        Infolists\Components\TextEntry::make('first_name'),
-                        Infolists\Components\TextEntry::make('last_name'),
+                        Infolists\Components\TextEntry::make('full_name')
+                            ->label('Name'),
                         Infolists\Components\TextEntry::make('email'),
                         Infolists\Components\TextEntry::make('formatted_mobile_phone')
-                            ->label('Mobile Phone'),
+                            ->label('Mobile'),
                         Infolists\Components\TextEntry::make('formatted_phone')
-                            ->label('Other Phone'),
+                            ->label('Phone'),
                     ])->columns(2),
 
                 Infolists\Components\Section::make('Address')
@@ -184,34 +247,35 @@ class ContactResource extends Resource
                         Infolists\Components\TextEntry::make('state_code'),
                         Infolists\Components\TextEntry::make('postal_code'),
                         Infolists\Components\TextEntry::make('country'),
-                    ])->columns(3),
+                    ])->columns(2),
 
                 Infolists\Components\Section::make('Status')
                     ->schema([
-                        Infolists\Components\TextEntry::make('lifecycle_stage')
+                        Infolists\Components\TagsEntry::make('lifecycleStages')
+                            ->label('Lifecycle Stages')
+                            ->getStateUsing(fn ($record) => $record->lifecycleStages->pluck('name'))
                             ->badge()
-                            ->color(fn (string $state): string => match ($state) {
-                                'donor_active', 'donor_influencer', 'donor_aggregator' => 'success',
-                                'donor_retired' => 'gray',
-                                'donor_candidate' => 'warning',
-                                'neighbor_active', 'neighbor_leader', 'neighbor_influencer' => 'info',
-                                'neighbor_retired' => 'gray',
-                                'neighbor_candidate' => 'warning',
-                                'mom_active' => 'purple',
-                                'mom_graduate' => 'success',
-                                'mom_candidate' => 'warning',
-                                default => 'gray',
+                            ->color(fn ($state) => match (true) {
+                                str_contains($state, 'Donor') => 'success',
+                                str_contains($state, 'Gala') => 'info',
+                                str_contains($state, 'Neighbor') => 'warning',
+                                str_contains($state, 'Mom') => 'danger',
+                                default => 'gray'
                             }),
-                    ])->columns(2),
-
-                Infolists\Components\Section::make('Additional Information')
-                    ->schema([
                         Infolists\Components\TextEntry::make('source')
                             ->badge(),
                         Infolists\Components\TextEntry::make('last_touched_at')
                             ->dateTime(),
+                    ])->columns(2),
+
+                Infolists\Components\Section::make('Additional Information')
+                    ->schema([
                         Infolists\Components\TextEntry::make('notes')
                             ->columnSpanFull(),
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->dateTime(),
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->dateTime(),
                     ]),
             ]);
     }
@@ -237,6 +301,7 @@ class ContactResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
+            ->with(['lifecycleStages', 'lifecycleStages.category'])
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

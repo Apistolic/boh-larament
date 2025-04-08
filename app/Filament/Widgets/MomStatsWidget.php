@@ -14,11 +14,15 @@ class MomStatsWidget extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Active Moms', Contact::where('lifecycle_stage', 'like', '%mom_active%')
+            Stat::make('Active Moms', Contact::whereHas('lifecycleStages', function ($query) {
+                    $query->where('name', 'like', '%Mom%')
+                        ->where('name', 'not like', '%Candidate%')
+                        ->whereNull('contact_lifecycle.ended_at');
+                })
                 ->count())
-                ->description('Currently active moms')
+                ->description('Moms in the system')
                 ->descriptionIcon('heroicon-m-user-group')
-                ->color('success')
+                ->color('danger')
                 ->url(
                     ContactResource::getUrl('index', [
                         'tableFilters' => [
@@ -28,10 +32,13 @@ class MomStatsWidget extends BaseWidget
                         ],
                     ])
                 ),
-            
-            Stat::make('Mom Pipeline', Contact::where('lifecycle_stage', 'like', '%mom_candidate%')
+
+            Stat::make('Mom Candidates', Contact::whereHas('lifecycleStages', function ($query) {
+                    $query->where('name', 'like', '%Mom%Candidate%')
+                        ->whereNull('contact_lifecycle.ended_at');
+                })
                 ->count())
-                ->description('Potential program participants')
+                ->description('Potential moms')
                 ->descriptionIcon('heroicon-m-user-plus')
                 ->color('warning')
                 ->url(
@@ -39,21 +46,6 @@ class MomStatsWidget extends BaseWidget
                         'tableFilters' => [
                             'lifecycle_stage' => [
                                 'values' => ['mom_candidate'],
-                            ],
-                        ],
-                    ])
-                ),
-            
-            Stat::make('Program Graduates', Contact::where('lifecycle_stage', 'like', '%mom_graduate%')
-                ->count())
-                ->description('Program graduates')
-                ->descriptionIcon('heroicon-m-academic-cap')
-                ->color('success')  // Changed to success since graduation is a positive outcome
-                ->url(
-                    ContactResource::getUrl('index', [
-                        'tableFilters' => [
-                            'lifecycle_stage' => [
-                                'values' => ['mom_graduate'],
                             ],
                         ],
                     ])

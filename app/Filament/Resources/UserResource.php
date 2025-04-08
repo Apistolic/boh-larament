@@ -132,4 +132,5 @@ class UserResource extends Resource
     {
         return static::getModel()::count();
     }
+
 }

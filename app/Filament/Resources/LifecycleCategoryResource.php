@@ -15,8 +15,8 @@ class LifecycleCategoryResource extends Resource
     protected static ?string $model = LifecycleCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-    protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 81;
+    protected static ?string $navigationGroup = 'Lifecycles';
+    protected static ?int $navigationSort = 61;
 
     public static function form(Form $form): Form
     {

@@ -16,7 +16,7 @@ class TouchResource extends Resource
     protected static ?string $model = Touch::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-hand-raised';
-    protected static ?string $navigationGroup = 'Touches';
+    protected static ?string $navigationGroup = 'Engagement';
     protected static ?int $navigationSort = 93;
 
     public static function form(Form $form): Form

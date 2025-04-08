@@ -48,7 +48,7 @@ class WorkflowExecutionSeeder extends Seeder
                             'first_name' => $contact->first_name,
                             'last_name' => $contact->last_name,
                             'email' => $contact->email,
-                            'lifecycle_stage' => $contact->lifecycle_stage,
+                            'lifecycle_stages' => $contact->activeLifecycleStages()->pluck('name')->toArray(),
                         ],
                         'trigger_type' => $workflow->trigger_type,
                         'trigger_time' => $startDate->toIso8601String(),

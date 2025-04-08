@@ -17,7 +17,7 @@ class WorkflowExecutionResource extends Resource
     protected static ?string $model = WorkflowExecution::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-play';
-    protected static ?string $navigationGroup = 'Touches';
+    protected static ?string $navigationGroup = 'Engagement';
     protected static ?string $navigationLabel = 'Workflow Executions';
     protected static ?int $navigationSort = 92;
 

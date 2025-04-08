@@ -18,8 +18,8 @@ class TouchTemplateLayoutResource extends Resource
     protected static ?string $model = TouchTemplateLayout::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 82;
+    protected static ?string $navigationGroup = 'Templates';
+    protected static ?int $navigationSort = 72;
 
     public static function form(Form $form): Form
     {

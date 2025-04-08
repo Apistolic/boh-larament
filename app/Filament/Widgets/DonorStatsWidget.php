@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Contact;
+use App\Models\LifecycleStage;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Filament\Resources\ContactResource;
@@ -14,10 +15,9 @@ class DonorStatsWidget extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Active Donors', Contact::where(function ($query) {
-                    $query->where('lifecycle_stage', 'like', '%donor_active%')
-                        ->orWhere('lifecycle_stage', 'like', '%donor_influencer%')
-                        ->orWhere('lifecycle_stage', 'like', '%donor_aggregator%');
+            Stat::make('Active Donors', Contact::whereHas('lifecycleStages', function ($query) {
+                    $query->where('name', 'like', '%Donor%')
+                        ->whereNull('contact_lifecycle.ended_at');
                 })
                 ->count())
                 ->description('Active donors in the system')
@@ -33,10 +33,9 @@ class DonorStatsWidget extends BaseWidget
                     ])
                 ),
             
-            Stat::make('Gala Engagement', Contact::where(function ($query) {
-                    $query->where('lifecycle_stage', 'like', '%gala_attendee%')
-                        ->orWhere('lifecycle_stage', 'like', '%gala_donor%')
-                        ->orWhere('lifecycle_stage', 'like', '%gala_candidate%');
+            Stat::make('Gala Engagement', Contact::whereHas('lifecycleStages', function ($query) {
+                    $query->where('name', 'like', '%Gala%')
+                        ->whereNull('contact_lifecycle.ended_at');
                 })
                 ->count())
                 ->description('Gala participants and prospects')
@@ -51,10 +50,13 @@ class DonorStatsWidget extends BaseWidget
                         ],
                     ])
                 ),
-            
-            Stat::make('Donor Pipeline', Contact::where('lifecycle_stage', 'like', '%donor_candidate%')
+
+            Stat::make('Donor Candidates', Contact::whereHas('lifecycleStages', function ($query) {
+                    $query->where('name', 'like', '%Donor%Candidate%')
+                        ->whereNull('contact_lifecycle.ended_at');
+                })
                 ->count())
-                ->description('Potential donors')
+                ->description('Potential donors in pipeline')
                 ->descriptionIcon('heroicon-m-user-plus')
                 ->color('warning')
                 ->url(
@@ -62,21 +64,6 @@ class DonorStatsWidget extends BaseWidget
                         'tableFilters' => [
                             'lifecycle_stage' => [
                                 'values' => ['donor_candidate'],
-                            ],
-                        ],
-                    ])
-                ),
-            
-            Stat::make('Retired Donors', Contact::where('lifecycle_stage', 'like', '%donor_retired%')
-                ->count())
-                ->description('Past donors')
-                ->descriptionIcon('heroicon-m-user-minus')
-                ->color('gray')
-                ->url(
-                    ContactResource::getUrl('index', [
-                        'tableFilters' => [
-                            'lifecycle_stage' => [
-                                'values' => ['donor_retired'],
                             ],
                         ],
                     ])

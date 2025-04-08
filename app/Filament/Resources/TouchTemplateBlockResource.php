@@ -10,7 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TouchTemplateBlockResource extends Resource
 {
@@ -19,8 +20,8 @@ class TouchTemplateBlockResource extends Resource
     protected static ?string $model = TouchTemplateBlock::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-puzzle-piece';
-    protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 83;
+    protected static ?string $navigationGroup = 'Templates';
+    protected static ?int $navigationSort = 73;
 
     public static function form(Form $form): Form
     {

@@ -25,7 +25,6 @@ class Contact extends Model
         'state_code',
         'postal_code',
         'country',
-        'lifecycle_stages',
         'notes',
         'source',
         'last_touched_at',
@@ -33,7 +32,6 @@ class Contact extends Model
 
     protected $casts = [
         'last_touched_at' => 'datetime',
-        'lifecycle_stages' => 'array',
     ];
 
     protected $appends = [
@@ -42,36 +40,12 @@ class Contact extends Model
         'full_name',
     ];
 
-    const LIFECYCLE_STAGES = [
-        'donor_candidate' => 'Donor Candidate',
-        'donor_active' => 'Active Donor',
-        'donor_influencer' => 'Donor Influencer',
-        'donor_aggregator' => 'Donor Aggregator',
-        'donor_retired' => 'Retired Donor',
-        'gala_candidate' => 'Gala Candidate',
-        'gala_attendee' => 'Gala Attendee',
-        'gala_donor' => 'Gala Donor',
-        'gala_neighbor_signup' => 'Gala Neighbor Signup',
-        'neighbor_candidate' => 'Neighbor Candidate',
-        'neighbor_active' => 'Active Neighbor',
-        'neighbor_retired' => 'Retired Neighbor',
-        'neighbor_influencer' => 'Neighbor Influencer',
-        'neighbor_leader' => 'Neighbor Leader',
-        'mom_candidate' => 'Mom Candidate',
-        'mom_active' => 'Active Mom',
-        'mom_graduate' => 'Graduated Mom',
-    ];
-
     protected static function booted()
     {
         static::updating(function (Contact $contact) {
-            // If lifecycle_stage is changing, fire an event
-            if ($contact->isDirty('lifecycle_stage')) {
-                event(new ContactLifecycleChanged(
-                    contact: $contact,
-                    oldLifecycleStage: $contact->getOriginal('lifecycle_stage'),
-                    newLifecycleStage: $contact->lifecycle_stage,
-                ));
+            // If lifecycle stages change, fire an event
+            if ($contact->isDirty('lifecycle_stages')) {
+                event(new ContactLifecycleChanged($contact));
             }
         });
     }
@@ -98,7 +72,9 @@ class Contact extends Model
      */
     public function isRetired(): bool
     {
-        return str_contains($this->lifecycle_stage, '_retired');
+        return $this->activeLifecycleStages()
+            ->where('name', 'like', '%Retired%')
+            ->exists();
     }
 
     /**
@@ -106,7 +82,9 @@ class Contact extends Model
      */
     public function isInProcess(): bool
     {
-        return str_contains($this->lifecycle_stage, '_candidate');
+        return $this->activeLifecycleStages()
+            ->where('name', 'not like', '%Retired%')
+            ->exists();
     }
 
     /**
@@ -114,36 +92,47 @@ class Contact extends Model
      */
     public function isDonor(): bool
     {
-        return str_contains($this->lifecycle_stage, 'donor_active') ||
-               str_contains($this->lifecycle_stage, 'donor_influencer') ||
-               str_contains($this->lifecycle_stage, 'donor_aggregator');
+        return $this->activeLifecycleStages()
+            ->where('name', 'like', 'Donor%')
+            ->where('name', 'not like', '%Candidate%')
+            ->exists();
     }
 
     public function isDonorCandidate(): bool
     {
-        return str_contains($this->lifecycle_stage, 'donor_candidate');
+        return $this->activeLifecycleStages()
+            ->where('name', 'like', 'Donor Candidate%')
+            ->exists();
     }
 
     public function isDonorRetired(): bool
     {
-        return str_contains($this->lifecycle_stage, 'donor_retired');
+        return $this->activeLifecycleStages()
+            ->where('name', 'like', 'Donor Retired%')
+            ->exists();
     }
 
     public function isNeighbor(): bool
     {
-        return str_contains($this->lifecycle_stage, 'neighbor_active') ||
-               str_contains($this->lifecycle_stage, 'neighbor_leader') ||
-               str_contains($this->lifecycle_stage, 'neighbor_influencer');
+        return $this->activeLifecycleStages()
+            ->where('name', 'like', 'Neighbor%')
+            ->where('name', 'not like', '%Candidate%')
+            ->exists();
     }
 
     public function isMom(): bool
     {
-        return str_contains($this->lifecycle_stage, 'mom');
+        return $this->activeLifecycleStages()
+            ->where('name', 'like', 'Mom%')
+            ->where('name', 'not like', '%Candidate%')
+            ->exists();
     }
 
     public function isCandidate(): bool
     {
-        return str_contains($this->lifecycle_stage, 'candidate');
+        return $this->activeLifecycleStages()
+            ->where('name', 'like', '%Candidate%')
+            ->exists();
     }
 
     // Format phone number for display

@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('state_code')->nullable();
             $table->string('postal_code')->nullable();
             $table->string('country')->default('USA');
-            $table->string('lifecycle_stage');
             $table->text('notes')->nullable();
             $table->string('source')->nullable();
             $table->timestamp('last_touched_at')->nullable();

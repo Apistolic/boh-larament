@@ -22,7 +22,7 @@ class MediaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-photo'; //rectangle-stack';
     protected static ?string $navigationGroup = 'Settings';
     
-    protected static ?int $navigationSort = 71;
+    protected static ?int $navigationSort = 91;
 
     public static function form(Form $form): Form
     {

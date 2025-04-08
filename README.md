@@ -291,3 +291,65 @@ Now, you can create a new project with a simple command:
 
 ```bash
 larament my-cool-app
+
+```
+
+## Roadmap
+
+### Upcoming Features
+
+- **One-time Password (OTP) System**
+  - Secure OTP generation and verification
+  - OTP expiration and re-issuance
+  - OTP history tracking
+  - OTP usage statistics
+  - https://x.com/i/grok?conversation=1908162706223378551
+
+- **Help Documentation**
+  - Comprehensive guide for new users
+  - Step-by-step tutorials
+  - FAQ section
+  - Troubleshooting guide
+  - "WalkMe"tm-like user guidance system
+  https://x.com/i/grok?conversation=1908160916710940782
+
+- **Email Tracking System**
+  - Advanced analytics for email opens and clicks
+  - Customizable tracking pixel implementation
+  - Privacy-compliant tracking options
+  - A/B testing capabilities
+
+- **Enhanced Workflow Management**
+  - Visual workflow builder
+  - Conditional branching and parallel execution
+  - Integration with external services
+  - Real-time workflow monitoring
+  - Advanced Workflow Triggers
+  - n8n integration
+  - https://x.com/i/grok?conversation=1908018461017608268
+
+- **Contact Management Improvements**
+  - Advanced segmentation tools
+  - Automated contact scoring
+  - Custom field builder
+  - Bulk operations enhancements
+
+- **Reporting & Analytics**
+  - Custom report builder
+  - Export capabilities in multiple formats
+  - Scheduled report generation
+  - Interactive dashboards
+
+- **System Integration**
+  - API expansion for third-party integrations
+  - Webhook system for real-time updates
+  - OAuth2 provider implementation
+  - Batch import/export tools
+
+### Long-term Goals
+
+- Mobile application development
+- Machine learning for contact scoring
+- Advanced automation capabilities
+- Multi-tenant architecture
+- Localization support for multiple languages

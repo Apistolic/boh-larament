@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\N8nWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+/*
+|--------------------------------------------------------------------------
+| n8n Webhook Routes
+|--------------------------------------------------------------------------
+*/
+Route::post('/webhooks/n8n', [N8nWebhookController::class, 'handle'])
+    ->name('webhooks.n8n');
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);

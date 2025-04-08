@@ -13,7 +13,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Illuminate\Contracts\View\View;
 use Filament\Notifications\Notification;
 
-class ViewTestTemplate extends Page implements HasForms
+class ViewTestTouchTemplate extends Page implements HasForms
 {
     use InteractsWithForms;
 

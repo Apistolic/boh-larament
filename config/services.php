@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'n8n' => [
+        'base_url' => env('N8N_BASE_URL', 'http://localhost:5678'),
+        'api_key' => env('N8N_API_KEY'),
+        'webhook_path' => env('N8N_WEBHOOK_PATH', 'webhook'),
+    ],
+
 ];
