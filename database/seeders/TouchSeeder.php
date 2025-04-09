@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Contact;
 use App\Models\Touch;
+use App\Models\TouchTemplate;
 use App\Models\WorkflowExecution;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -13,26 +14,35 @@ class TouchSeeder extends Seeder
     public function run(): void
     {
         // Get some contacts and workflow executions to work with
-        $contacts = Contact::take(3)->get();
-        $workflowExecutions = WorkflowExecution::take(3)->get();
+        $contacts = Contact::take(20)->get();
+        $workflowExecutions = WorkflowExecution::take(10)->get();
+        $templates = TouchTemplate::all();
 
         if ($contacts->isEmpty() || $workflowExecutions->isEmpty()) {
             $this->command->warn('No contacts or workflow executions found. Skipping touch seeding.');
             return;
         }
 
+        if ($templates->isEmpty()) {
+            $this->command->warn('No templates found. Run TouchTemplateSeeder first.');
+            return;
+        }
+
+        // Clear existing touches
+        DB::table('touches')->delete();
+
+        $welcomeTemplate = $templates->firstWhere('name', 'Welcome New Donor');
+        $galaTemplate = $templates->firstWhere('name', 'Gala Invitation');
+        $neighborTemplate = $templates->firstWhere('name', 'Welcome New Neighbor');
+
         $touches = [
             // Past touches
             [
                 'type' => Touch::TYPE_EMAIL,
                 'status' => Touch::STATUS_SENT,
-                'subject' => 'Welcome to Bridge of Hope',
-                'content' => 'Dear {contact.first_name},
-
-We are so glad you\'ve joined the Bridge of Hope community. We look forward to walking alongside you on this journey.
-
-Best regards,
-The Bridge of Hope Team',
+                'template_id' => $welcomeTemplate->id,
+                'subject' => $welcomeTemplate->subject,
+                'content' => $welcomeTemplate->html_content,
                 'scheduled_for' => now()->subDays(5),
                 'executed_at' => now()->subDays(5),
             ],
@@ -47,63 +57,44 @@ The Bridge of Hope Team',
             [
                 'type' => Touch::TYPE_EMAIL,
                 'status' => Touch::STATUS_PENDING,
-                'subject' => 'Your Bridge of Hope Journey Update',
-                'content' => 'Dear {contact.first_name},
-
-We wanted to check in and see how you\'re doing. Your journey with Bridge of Hope is important to us.
-
-Would you like to schedule a time to talk?
-
-Best regards,
-The Bridge of Hope Team',
-                'scheduled_for' => now(),
+                'template_id' => $galaTemplate->id,
+                'subject' => $galaTemplate->subject,
+                'content' => $galaTemplate->html_content,
+                'scheduled_for' => now()->addDays(2),
             ],
-            // Failed touch
-            [
-                'type' => Touch::TYPE_SMS,
-                'status' => Touch::STATUS_FAILED,
-                'content' => 'Hi {contact.first_name}! Your mentor would like to connect with you. Please call us back when you can.',
-                'scheduled_for' => now()->subDay(),
-                'executed_at' => now()->subDay(),
-                'error' => 'Failed to send SMS: Invalid phone number',
-            ],
-            // Future scheduled touches
             [
                 'type' => Touch::TYPE_EMAIL,
                 'status' => Touch::STATUS_SCHEDULED,
-                'subject' => 'Monthly Check-in',
-                'content' => 'Dear {contact.first_name},
-
-It\'s time for our monthly check-in! How are things going with your goals?
-
-Let us know if you need any support.
-
-Best regards,
-The Bridge of Hope Team',
-                'scheduled_for' => now()->addDays(3),
-            ],
-            [
-                'type' => Touch::TYPE_CALL,
-                'status' => Touch::STATUS_SCHEDULED,
-                'content' => 'Monthly follow-up call to check on housing situation and current needs.',
+                'template_id' => $neighborTemplate->id,
+                'subject' => $neighborTemplate->subject,
+                'content' => $neighborTemplate->html_content,
                 'scheduled_for' => now()->addDays(5),
+            ],
+            // Failed touch
+            [
+                'type' => Touch::TYPE_EMAIL,
+                'status' => Touch::STATUS_FAILED,
+                'template_id' => $welcomeTemplate->id,
+                'subject' => $welcomeTemplate->subject,
+                'content' => $welcomeTemplate->html_content,
+                'scheduled_for' => now()->subDays(1),
+                'executed_at' => now()->subDays(1),
+                'error' => 'Failed to deliver: Invalid email address',
             ],
         ];
 
-        foreach ($contacts as $index => $contact) {
-            // Get a workflow execution for this contact
-            $workflowExecution = $workflowExecutions[$index % $workflowExecutions->count()];
+        foreach ($touches as $touch) {
+            // Get a random contact and workflow execution
+            $contact = $contacts->random();
+            $workflowExecution = $workflowExecutions->random();
 
-            // Create two touches for each contact
-            $contactTouches = array_slice($touches, $index * 2, 2);
-            foreach ($contactTouches as $touch) {
-                Touch::create(array_merge($touch, [
-                    'contact_id' => $contact->id,
-                    'workflow_execution_id' => $workflowExecution->id,
-                ]));
-            }
+            // Create the touch
+            Touch::create(array_merge($touch, [
+                'contact_id' => $contact->id,
+                'workflow_execution_id' => $workflowExecution->id,
+            ]));
         }
 
-        $this->command->info('Created ' . (count($contacts) * 2) . ' touches.');
+        $this->command->info('Created ' . count($touches) . ' touches.');
     }
 }

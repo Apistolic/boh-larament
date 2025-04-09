@@ -20,7 +20,7 @@ class ExecutionsRelationManager extends RelationManager
                 Forms\Components\Section::make('Execution Details')
                     ->schema([
                         Forms\Components\Select::make('contact_id')
-                            ->relationship('contact', 'name')
+                            ->relationship('contact', 'full_name')
                             ->required()
                             ->searchable()
                             ->readonly(),
@@ -55,11 +55,19 @@ class ExecutionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                Tables\Columns\TextColumn::make('contact.name')
+                Tables\Columns\TextColumn::make('contact.full_name')
                     ->label('Contact')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\BadgeColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state) => match($state) {
+                        WorkflowExecution::STATUS_PENDING => 'Pending',
+                        WorkflowExecution::STATUS_IN_PROGRESS => 'In Progress',
+                        WorkflowExecution::STATUS_COMPLETED => 'Completed',
+                        WorkflowExecution::STATUS_FAILED => 'Failed',
+                        default => $state,
+                    })
                     ->colors([
                         'warning' => WorkflowExecution::STATUS_PENDING,
                         'primary' => WorkflowExecution::STATUS_IN_PROGRESS,

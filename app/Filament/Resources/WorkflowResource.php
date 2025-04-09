@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\WorkflowResource\Pages;
 use App\Filament\Resources\WorkflowResource\RelationManagers;
 use App\Models\Workflow;
+use App\Models\WorkflowType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -28,11 +29,10 @@ class WorkflowResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\Select::make('type')
-                            ->options(Workflow::getTypes())
+                        Forms\Components\Select::make('workflow_type_id')
+                            ->label('Type')
                             ->required()
-                            ->native(false)
-                            ->searchable(),
+                            ->options(WorkflowType::pluck('name', 'id')),
                         Forms\Components\Textarea::make('description')
                             ->maxLength(65535)
                             ->columnSpanFull(),
@@ -41,13 +41,19 @@ class WorkflowResource extends Resource
                 Forms\Components\Section::make('Trigger Configuration')
                     ->schema([
                         Forms\Components\Select::make('trigger_type')
-                            ->options(Workflow::getTriggerTypes())
+                            ->options([
+                                'manual' => 'Manual',
+                                'contact_created' => 'Contact Created',
+                                'contact_updated' => 'Contact Updated',
+                                'lifecycle_stage_changed' => 'Lifecycle Stage Changed',
+                                'donation_received' => 'Donation Received',
+                            ])
                             ->required()
                             ->native(false)
                             ->reactive(),
                         Forms\Components\KeyValue::make('trigger_criteria')
                             ->keyLabel('Field')
-                            ->valueLabel('Condition')
+                            ->valueLabel('Value')
                             ->addButtonLabel('Add Condition')
                             ->columnSpanFull(),
                     ]),
@@ -77,7 +83,8 @@ class WorkflowResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('type')
+                Tables\Columns\TextColumn::make('workflowType.name')
+                    ->label('Type')
                     ->badge()
                     ->color(fn (string $state): string => match (explode('_', $state)[0]) {
                         'new' => 'warning',
@@ -108,11 +115,17 @@ class WorkflowResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('type')
-                    ->options(Workflow::getTypes())
-                    ->multiple(),
+                Tables\Filters\SelectFilter::make('workflow_type_id')
+                    ->label('Type')
+                    ->options(WorkflowType::pluck('name', 'id')),
                 Tables\Filters\SelectFilter::make('trigger_type')
-                    ->options(Workflow::getTriggerTypes()),
+                    ->options([
+                        'manual' => 'Manual',
+                        'contact_created' => 'Contact Created',
+                        'contact_updated' => 'Contact Updated',
+                        'lifecycle_stage_changed' => 'Lifecycle Stage Changed',
+                        'donation_received' => 'Donation Received',
+                    ]),
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Active'),
             ])
@@ -135,6 +148,8 @@ class WorkflowResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\InitiationTriggersRelationManager::class,
+            RelationManagers\CompletionTriggersRelationManager::class,
             RelationManagers\ExecutionsRelationManager::class,
         ];
     }

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('contact_id')->constrained()->cascadeOnDelete();
             $table->foreignId('workflow_execution_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('template_id')->nullable()->constrained('touch_templates')->nullOnDelete();
             $table->string('type'); // email, sms, call, etc.
             $table->string('status'); // pending, sent, failed, etc.
             $table->json('metadata')->nullable(); // Store any additional data about the touch

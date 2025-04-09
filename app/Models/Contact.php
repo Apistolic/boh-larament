@@ -40,12 +40,22 @@ class Contact extends Model
         'full_name',
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
-        static::updating(function (Contact $contact) {
+        static::updating(function (Contact $contact): void {
             // If lifecycle stages change, fire an event
             if ($contact->isDirty('lifecycle_stages')) {
-                event(new ContactLifecycleChanged($contact));
+                $oldStages = $contact->getOriginal('lifecycle_stages');
+                $newStages = $contact->lifecycle_stages;
+                
+                $oldStage = $oldStages ? $oldStages->first()?->name : '';
+                $newStage = $newStages ? $newStages->first()?->name : '';
+
+                event(new ContactLifecycleChanged(
+                    contact: $contact,
+                    oldLifecycleStage: $oldStage ?? '',
+                    newLifecycleStage: $newStage ?? '',
+                ));
             }
         });
     }
@@ -138,45 +148,35 @@ class Contact extends Model
     // Format phone number for display
     public function getFormattedPhoneAttribute(): ?string
     {
-        if (!$this->phone) {
-            return null;
-        }
-
-        // Strip everything except digits
-        $cleaned = preg_replace('/[^0-9]/', '', $this->phone);
-        
-        // Format as (XXX) XXX-XXXX
-        if (strlen($cleaned) === 10) {
-            return sprintf("(%s) %s-%s",
-                substr($cleaned, 0, 3),
-                substr($cleaned, 3, 3),
-                substr($cleaned, 6, 4)
-            );
-        }
-        
-        return $this->phone;
+        return $this->formatPhoneNumber($this->phone);
     }
 
     // Format mobile phone number for display
     public function getFormattedMobilePhoneAttribute(): ?string
     {
-        if (!$this->mobile_phone) {
+        return $this->formatPhoneNumber($this->mobile_phone);
+    }
+
+    protected function formatPhoneNumber(?string $number): ?string
+    {
+        if (!$number) {
             return null;
         }
 
-        // Strip everything except digits
-        $cleaned = preg_replace('/[^0-9]/', '', $this->mobile_phone);
-        
+        // Remove everything except digits
+        $number = preg_replace('/[^0-9]/', '', $number);
+
         // Format as (XXX) XXX-XXXX
-        if (strlen($cleaned) === 10) {
-            return sprintf("(%s) %s-%s",
-                substr($cleaned, 0, 3),
-                substr($cleaned, 3, 3),
-                substr($cleaned, 6, 4)
+        if (strlen($number) === 10) {
+            return sprintf(
+                '(%s) %s-%s',
+                substr($number, 0, 3),
+                substr($number, 3, 3),
+                substr($number, 6)
             );
         }
-        
-        return $this->mobile_phone;
+
+        return $number;
     }
 
     // Get full name
@@ -220,5 +220,10 @@ class Contact extends Model
     public function activeContactLifecycles(): HasMany
     {
         return $this->contactLifecycles()->whereNull('ended_at');
+    }
+
+    public function contactTouches(): HasMany
+    {
+        return $this->hasMany(Touch::class);
     }
 }

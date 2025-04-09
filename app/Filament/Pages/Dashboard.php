@@ -6,6 +6,7 @@ use App\Filament\Widgets\DonorStatsWidget;
 use App\Filament\Widgets\LifecycleStagesChartWidget;
 use App\Filament\Widgets\MomStatsWidget;
 use App\Filament\Widgets\NeighborStatsWidget;
+use App\Filament\Widgets\TouchesTimelineWidget;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
@@ -18,6 +19,7 @@ class Dashboard extends BaseDashboard
             DonorStatsWidget::class,
             NeighborStatsWidget::class,
             MomStatsWidget::class,
+            TouchesTimelineWidget::class,
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Workflow;
+use App\Models\WorkflowType;
 use Illuminate\Database\Seeder;
 
 class WorkflowSeeder extends Seeder
@@ -13,7 +14,7 @@ class WorkflowSeeder extends Seeder
             // Donor Workflows
             [
                 'name' => 'New Donor Candidate Process',
-                'type' => 'new_donor_candidate',
+                'legacy_type' => 'new_donor_candidate',
                 'description' => 'Workflow triggered when a new donor candidate is identified',
                 'trigger_type' => 'lifecycle_stage_changed',
                 'trigger_criteria' => [
@@ -26,10 +27,11 @@ class WorkflowSeeder extends Seeder
                     'assign_owner' => 'random_development_team',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
             [
                 'name' => 'Donor Activation',
-                'type' => 'new_active_donor',
+                'legacy_type' => 'new_active_donor',
                 'description' => 'Process when a donor candidate becomes an active donor',
                 'trigger_type' => 'lifecycle_stage_changed',
                 'trigger_criteria' => [
@@ -42,12 +44,13 @@ class WorkflowSeeder extends Seeder
                     'schedule_followup' => '30_days',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
 
             // Neighbor Workflows
             [
                 'name' => 'New Neighboring Volunteer Interest',
-                'type' => 'new_neighboring_volunteer_candidate',
+                'legacy_type' => 'new_neighboring_volunteer_candidate',
                 'description' => 'Process for new volunteer inquiries',
                 'trigger_type' => 'contact_created',
                 'trigger_criteria' => [
@@ -58,10 +61,11 @@ class WorkflowSeeder extends Seeder
                     'schedule_orientation' => 'next_available',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
             [
                 'name' => 'Volunteer Onboarding',
-                'type' => 'new_nv',
+                'legacy_type' => 'new_nv',
                 'description' => 'Onboarding process for new volunteers',
                 'trigger_type' => 'lifecycle_stage_changed',
                 'trigger_criteria' => [
@@ -74,12 +78,13 @@ class WorkflowSeeder extends Seeder
                     'assign_mentor' => 'experienced_volunteer',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
 
             // Mom Workflows
             [
                 'name' => 'New Mom Application',
-                'type' => 'new_mom_candidate',
+                'legacy_type' => 'new_mom_candidate',
                 'description' => 'Process for new mom program applications',
                 'trigger_type' => 'contact_created',
                 'trigger_criteria' => [
@@ -91,10 +96,11 @@ class WorkflowSeeder extends Seeder
                     'schedule_interview' => 'initial_interview',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
             [
                 'name' => 'Mom Program Acceptance',
-                'type' => 'new_mom',
+                'legacy_type' => 'new_mom',
                 'description' => 'Process when a mom is accepted into the program',
                 'trigger_type' => 'lifecycle_stage_changed',
                 'trigger_criteria' => [
@@ -107,10 +113,11 @@ class WorkflowSeeder extends Seeder
                     'schedule_orientation' => 'next_mom_orientation',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
             [
                 'name' => 'Mom Program Graduation',
-                'type' => 'new_mom',
+                'legacy_type' => 'new_mom',
                 'description' => 'Process when a mom completes the program and graduates',
                 'trigger_type' => 'lifecycle_stage_changed',
                 'trigger_criteria' => [
@@ -130,12 +137,13 @@ class WorkflowSeeder extends Seeder
                     'update_metrics' => 'program_completion_stats',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
 
             // Gala Workflows
             [
                 'name' => 'Gala Invitation Process',
-                'type' => 'new_gala_candidate',
+                'legacy_type' => 'new_gala_candidate',
                 'description' => 'Workflow for potential gala attendees',
                 'trigger_type' => 'manual',
                 'trigger_criteria' => [
@@ -147,10 +155,11 @@ class WorkflowSeeder extends Seeder
                     'create_task' => 'followup_call',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
             [
                 'name' => 'Gala Attendee Registration',
-                'type' => 'gala_attendee',
+                'legacy_type' => 'gala_attendee',
                 'description' => 'Process when someone registers for the gala',
                 'trigger_type' => 'contact_updated',
                 'trigger_criteria' => [
@@ -162,10 +171,11 @@ class WorkflowSeeder extends Seeder
                     'create_name_tag' => 'gala_name_tags',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
             [
                 'name' => 'Gala Auction Winner Follow-up',
-                'type' => 'gala_auction_winner',
+                'legacy_type' => 'gala_auction_winner',
                 'description' => 'Process for auction item winners',
                 'trigger_type' => 'manual',
                 'trigger_criteria' => [
@@ -177,10 +187,11 @@ class WorkflowSeeder extends Seeder
                     'coordinate_delivery' => 'auction_item_delivery',
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
             [
                 'name' => 'Gala Volunteer Sign-up',
-                'type' => 'gala_neighbor_signup',
+                'legacy_type' => 'gala_neighbor_signup',
                 'description' => 'Process for volunteers signing up for gala duties',
                 'trigger_type' => 'contact_updated',
                 'trigger_criteria' => [
@@ -193,10 +204,19 @@ class WorkflowSeeder extends Seeder
                     'send_reminder' => ['timing' => 'day_before'],
                 ],
                 'is_active' => true,
+                'legacy_trigger' => true,
             ],
         ];
 
         foreach ($workflows as $workflow) {
+            // Get the workflow type
+            $type = WorkflowType::where('name', 'like', '%' . str_replace('_', ' ', $workflow['legacy_type']) . '%')
+                ->first();
+
+            if ($type) {
+                $workflow['workflow_type_id'] = $type->id;
+            }
+
             Workflow::create($workflow);
         }
     }

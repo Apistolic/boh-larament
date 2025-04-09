@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TouchTemplateResource\Pages;
 use App\Models\Contact;
+use App\Models\LifecycleStage;
 use App\Models\TouchTemplate;
 use App\Models\TouchTemplateBlock;
 use App\Models\TouchTemplateLayout;
@@ -64,7 +65,7 @@ class TouchTemplateResource extends Resource
                         Forms\Components\Select::make('target_lifecycle_stages')
                             ->multiple()
                             ->required()
-                            ->options(Contact::LIFECYCLE_STAGES)
+                            ->options(LifecycleStage::where('is_active', true)->pluck('name', 'slug'))
                             ->searchable(),
                         Forms\Components\Select::make('layout_id')
                             ->label('Layout')
@@ -115,7 +116,7 @@ class TouchTemplateResource extends Resource
                     ->label('Layout'),
                 Tables\Columns\TextColumn::make('target_lifecycle_stages')
                     ->listWithLineBreaks()
-                    ->formatStateUsing(fn ($state) => collect($state)->map(fn ($stage) => Contact::LIFECYCLE_STAGES[$stage] ?? $stage)),
+                    ->formatStateUsing(fn ($state) => collect($state)->map(fn ($stage) => LifecycleStage::where('slug', $stage)->first()->name ?? $stage)),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('updated_at')
@@ -125,7 +126,7 @@ class TouchTemplateResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('target_lifecycle_stages')
                     ->multiple()
-                    ->options(Contact::LIFECYCLE_STAGES),
+                    ->options(LifecycleStage::where('is_active', true)->pluck('name', 'slug')),
                 Tables\Filters\SelectFilter::make('layout')
                     ->relationship('layout', 'name'),
                 Tables\Filters\TernaryFilter::make('is_active'),

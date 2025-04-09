@@ -22,6 +22,7 @@ class Touch extends Model
         'scheduled_for',
         'executed_at',
         'error',
+        'template_id',
     ];
 
     protected $casts = [
@@ -49,6 +50,11 @@ class Touch extends Model
     public function workflowExecution(): BelongsTo
     {
         return $this->belongsTo(WorkflowExecution::class);
+    }
+
+    public function template(): BelongsTo
+    {
+        return $this->belongsTo(TouchTemplate::class);
     }
 
     public function scopePending($query)

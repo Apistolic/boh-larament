@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             ContactSeeder::class,
             WorkflowSeeder::class,
             WorkflowExecutionSeeder::class, // This now creates touches automatically via action handlers
+            WorkflowTypeSeeder::class,
+            WorkflowTriggerSeeder::class,
             TouchTemplateSeeder::class,
             TouchTemplateBlocksSeeder::class, // After media: blocks use media files
             TouchTemplateLayoutsSeeder::class,// After blocks: layouts use blocks

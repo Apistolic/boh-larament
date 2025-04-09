@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
 
 class TouchResource extends Resource
 {
@@ -56,8 +57,26 @@ class TouchResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('subject')
                             ->maxLength(255),
-                        Forms\Components\Textarea::make('content')
-                            ->required()
+                        Forms\Components\Select::make('template_id')
+                            ->relationship('template', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->visible(fn ($record) => $record?->type === Touch::TYPE_EMAIL),
+                        Forms\Components\Tabs::make('Content')
+                            ->tabs([
+                                Forms\Components\Tabs\Tab::make('Raw Content')
+                                    ->schema([
+                                        Forms\Components\Textarea::make('content')
+                                            ->required()
+                                            ->columnSpanFull(),
+                                    ]),
+                                Forms\Components\Tabs\Tab::make('Preview')
+                                    ->schema([
+                                        Forms\Components\View::make('filament.forms.components.html-preview')
+                                            ->view('filament.forms.components.html-preview')
+                                            ->columnSpanFull(),
+                                    ]),
+                            ])
                             ->columnSpanFull(),
                         Forms\Components\DateTimePicker::make('scheduled_for'),
                         Forms\Components\DateTimePicker::make('executed_at')
@@ -96,6 +115,11 @@ class TouchResource extends Resource
                 Tables\Columns\TextColumn::make('subject')
                     ->searchable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('content')
+                    ->html()
+                    ->wrap()
+                    ->toggleable()
+                    ->label('Content Preview'),
                 Tables\Columns\TextColumn::make('scheduled_for')
                     ->dateTime()
                     ->sortable(),
@@ -170,6 +194,6 @@ class TouchResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->with(['contact', 'workflowExecution']);
+        return parent::getEloquentQuery()->with(['contact', 'workflowExecution', 'template.layout']);
     }
 }
