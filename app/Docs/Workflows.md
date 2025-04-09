@@ -6,26 +6,38 @@ This document outlines the automated workflows in the system, organized by categ
 
 These workflows handle the donor lifecycle from initial contact through active donor status.
 
-### Donor Candidate Process
+### New Donor Candidate Process
 
 ```mermaid
 flowchart TD
-    %% Donor Candidate Process
-    A[Contact Created] -->|Stage: donor_candidate| B[New Donor Candidate Process]
-    B --> C[Send Welcome Email]
-    B --> D[Create Task: Schedule Initial Meeting]
-    B --> E[Assign Development Team Member]
+    %% New Donor Candidate Process
+    A[New Donor Contact Created/Updated] -->|Stage: donor_candidate| B[New Donor Candidate Welcome/Initial Outreach]
+    B --> C[Send 2nd Outreach]
+    C --> D[Send 3rd Outreach]
+    D --> |Stage: donor_candidate_stagnant| E[Standard Donor Candidate Drip]
+
+
+### New Donor Candidate Confirmed
+
+```mermaid
+flowchart TD
+    %% New Donor Candidate Confirmed
+    A[New Donor Confirmed] -->|Stage: donor_candidate_confirmed| B[Assign Development Team Member]
+    B --> C[Schedule Initial Donor Meeting]
+    C --> D[Initial Donor Meeting]
 ```
 
-### Donor Activation
+### Donor Activation/Renewal
 
 ```mermaid
 flowchart TD
-    %% Donor Activation
-    F[Stage Changed] -->|donor_candidate -> donor| G[Donor Activation]
-    G --> H[Send Thank You]
-    G --> I[Add to Newsletter]
-    G --> J[Schedule 30-day Followup]
+    %% Donor Activation/Renewal
+    A[Donation Received] -->|donor_candidate -> donor| B[New Donor Milestone]
+    C --> D[Donor Activation]
+    C --> E[Send Thank You]
+    C --> F[Add to Newsletter]
+    C --> G[Schedule 30-day Followup]
+    C --> H[Schedule 180-day Followups]
 ```
 
 ## Neighboring Volunteer Workflows
