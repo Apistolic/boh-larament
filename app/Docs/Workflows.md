@@ -6,6 +6,8 @@ This document outlines the automated workflows in the system, organized by categ
 
 These workflows handle the donor lifecycle from initial contact through active donor status.
 
+### Donor Candidate Process
+
 ```mermaid
 flowchart TD
     %% Donor Candidate Process
@@ -13,7 +15,12 @@ flowchart TD
     B --> C[Send Welcome Email]
     B --> D[Create Task: Schedule Initial Meeting]
     B --> E[Assign Development Team Member]
-    
+```
+
+### Donor Activation
+
+```mermaid
+flowchart TD
     %% Donor Activation
     F[Stage Changed] -->|donor_candidate -> donor| G[Donor Activation]
     G --> H[Send Thank You]
@@ -25,13 +32,22 @@ flowchart TD
 
 These workflows manage volunteer recruitment and onboarding processes.
 
+### Neighboring Volunteer Process
+
 ```mermaid
 flowchart TD
     %% Neighboring Volunteer Process
     A[Contact Created] -->|Stage: neighbor_candidate| B[New Volunteer Interest]
     B --> C[Send Info Packet]
-    B --> D[Schedule Orientation]
-    
+    B --> D[Receive Clearances]
+    B --> E[Receive Forms]
+    B --> F[Schedule Orientation]
+```
+
+### Volunteer Onboarding
+
+```mermaid
+flowchart TD
     %% Volunteer Onboarding
     E[Stage Changed] -->|neighbor_candidate -> neighbor| F[Volunteer Onboarding]
     F --> G[Send Welcome Kit]
@@ -43,6 +59,8 @@ flowchart TD
 
 These workflows handle the complete journey of program participants from application through graduation.
 
+### Mom Program Flow
+
 ```mermaid
 flowchart TD
     %% Mom Program Flow
@@ -50,13 +68,23 @@ flowchart TD
     B --> C[Send Application]
     B --> D[Create Review Task]
     B --> E[Schedule Interview]
-    
+```
+
+### Mom Acceptance
+
+```mermaid
+flowchart TD
     %% Mom Acceptance
     F[Stage Changed] -->|mom_candidate -> mom_participant| G[Mom Program Acceptance]
     G --> H[Send Welcome Packet]
     G --> I[Assign Mentor]
     G --> J[Schedule Orientation]
-    
+```
+
+### Mom Graduation
+
+```mermaid
+flowchart TD
     %% Mom Graduation
     K[Stage Changed] -->|mom_participant -> mom_graduate| L[Mom Program Graduation]
     L --> M[Send Congratulations]
