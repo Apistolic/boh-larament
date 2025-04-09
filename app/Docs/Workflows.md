@@ -15,7 +15,7 @@ flowchart TD
     B --> C[Send 2nd Outreach]
     C --> D[Send 3rd Outreach]
     D --> |Stage: donor_candidate_stagnant| E[Standard Donor Candidate Drip]
-
+```
 
 ### New Donor Candidate Confirmed
 
