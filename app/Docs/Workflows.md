@@ -40,8 +40,9 @@ flowchart TD
     A[Contact Created] -->|Stage: neighbor_candidate| B[New Volunteer Interest]
     B --> C[Send Info Packet]
     D[Receive Clearances] -- |Stage: neighbor_training_pending| E[Schedule Orientation]
-    F --> G[Orientation]
-    H[Orientation Complete] -- |Stage: neighbor_active| I[Assign Mentor]
+    E --> F[Orientation]
+    F -->|Stage: neighbor_training_pending| G[Orientation Complete]
+    G --> H[Assign Mentor]
 ```
 
 ### Volunteer Onboarding
