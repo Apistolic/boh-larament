@@ -100,33 +100,47 @@ flowchart TD
 
 These workflows manage various aspects of the gala event, from invitations to auction management.
 
+### Gala Invitation
+
 ```mermaid
 flowchart TD
     %% Gala Workflows
     A[Manual Trigger] -->|Donor Level & Previous Attendance| B[Gala Invitation]
     B --> C[Send Invitation]
     B --> D[Create Followup Call]
-    
+```
+
+### Gala Registration
+
+```mermaid
+flowchart TD
     %% Registration
     E[Contact Updated] -->|Registration Confirmed| F[Gala Registration]
     F --> G[Send Confirmation]
     F --> H[Add to Seating Chart]
     F --> I[Create Name Tag]
-    
-    %% Auction Winner
-    J[Manual Trigger] -->|Auction Won| K[Auction Winner Followup]
-    K --> L[Send Congratulations]
-    K --> M[Process Payment]
-    K --> N[Coordinate Delivery]
-    
-    %% Volunteer
-    O[Contact Updated] -->|Volunteer Event: Gala| P[Gala Volunteer Signup]
-    P --> Q[Send Instructions]
-    P --> R[Add to Schedule]
-    P --> S[Assign Duties]
 ```
 
-## Workflow Trigger Types
+### Auction Winner
+
+```mermaid
+flowchart TD
+    %% Auction Winner
+    J[Manual Trigger] -->|Auction Won| K[Auction Winner Followup]
+    K --> M[Process Payment]
+    K --> L[Send Congratulations + 2 days]
+```
+
+### Neighboring Volunteer Gala Signup
+
+```mermaid
+flowchart TD
+    %% Neighboring Volunteer Signup
+    O[Contact Updated] -->|Volunteer Event: Gala| P[Gala Volunteer Signup]
+    P --> Q[Send Instructions + 2 days]
+```
+
+### Workflow Trigger Types
 
 Workflows can be initiated by several types of triggers:
 
