@@ -39,9 +39,9 @@ flowchart TD
     %% Neighboring Volunteer Process
     A[Contact Created] -->|Stage: neighbor_candidate| B[New Volunteer Interest]
     B --> C[Send Info Packet]
-    D[Receive Clearances] -- |Stage: neighbor_training_pending| E[Schedule Orientation]
+    D[Receive Clearances] --> |Stage: neighbor_training_pending| E[Schedule Orientation]
     E --> F[Orientation]
-    F -->|Stage: neighbor_training_pending| G[Orientation Complete]
+    F -->|Stage: neighbor_active| G[Orientation Complete]
     G --> H[Assign Mentor]
 ```
 
