@@ -19,14 +19,23 @@ flowchart TD
     F --> |Stage: donor_candidate_stagnant| G[Standard Donor Candidate Drip]
 ```
 
-### New Donor Candidate Confirmed
+### New Donor Activation
 
 ```mermaid
 flowchart TD
     %% New Donor Candidate Confirmed
-    A[New Donor Confirmed] -->|Stage: donor_candidate_confirmed| B[Assign Development Team Member]
+    A[New Donor Confirmed] -->|Stage: donor_candidate_activation| B[Assign Development Team Member]
     B --> C[Schedule Initial Donor Meeting]
     C --> D[Initial Donor Meeting]
+    D --> E[Donation Received?]
+    E --> |No| D
+    E --> |Yes| F{{Donation Received}}
+    F -->|donor_candidate -> donor| G[New Donor Milestone]
+    G --> H[Donor Activation]
+    H --> I[Send Thank You]
+    H --> J[Add to Newsletter]
+    H --> K[Schedule 30-day Followup]
+    H --> L[Schedule 180-day Followups]
 ```
 
 ### Donor Activation/Renewal
