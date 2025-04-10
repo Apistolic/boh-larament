@@ -23,6 +23,15 @@ flowchart TD
     C --> |No| E[Send 2nd Outreach]
     E --> F[Send 3rd Outreach]
     F --> |Stage: donor_candidate_stagnant| G[[Standard Donor Candidate Drip]]
+
+journey
+    title Optional Title
+    section SectionName
+        TaskName: Score: Actor(s)
+        AnotherTask: Score: Actor(s)
+    section AnotherSection
+        TaskThree: Score: Actor(s)
+
 ```
 
 ### New Donor Activation
@@ -32,7 +41,7 @@ flowchart TD
     %% New Donor Candidate Confirmed
     A[New Donor Confirmed] -->|Stage: donor_candidate_activation| B[Assign Development Team Member]
     B --> C[Schedule Initial Donor Meeting]
-    C --> D[Initial/Follow-up Donor Meeting(s)]
+    C --> D[Initial & Follow-up Donor Meetings]
     D --> E[Donation Received?]
     E --> |No| D
     E --> |Yes| F{{Donation Received}}
