@@ -12,9 +12,11 @@ These workflows handle the donor lifecycle from initial contact through active d
 flowchart TD
     %% New Donor Candidate Process
     A[New Donor Contact Created/Updated] -->|Stage: donor_candidate| B[New Donor Candidate Welcome/Initial Outreach]
-    B --> C[Send 2nd Outreach]
-    C --> D[Send 3rd Outreach]
-    D --> |Stage: donor_candidate_stagnant| E[Standard Donor Candidate Drip]
+    B --> C[New Donor Confirmed?]
+    C -> |Yes| D{{Continue with Donor Activation}}
+    C -> |No| E[Send 2nd Outreach]
+    E --> F[Send 3rd Outreach]
+    F --> |Stage: donor_candidate_stagnant| G[Standard Donor Candidate Drip]
 ```
 
 ### New Donor Candidate Confirmed
