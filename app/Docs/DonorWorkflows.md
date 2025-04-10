@@ -10,10 +10,6 @@ These workflows handle the donor lifecycle from initial contact through active d
 
 ```mermaid
 
-%% Define styles globally
-classDef redStyle fill:#ff0000,stroke:#333,stroke-width:2px;
-classDef blueStyle fill:#0000ff,stroke:#fff;
-
 flowchart TD
     %% New Donor Candidate Process
     title New Donor Candidate Process
@@ -23,7 +19,6 @@ flowchart TD
     C --> |No| E[Send 2nd Outreach]
     E --> F[Send 3rd Outreach]
     F --> |Stage: donor_candidate_stagnant| G[Standard Donor Candidate Drip:fill:#0000ff,stroke:#fff]
-    class F blueStyle;
 
 journey
     title Optional Title
