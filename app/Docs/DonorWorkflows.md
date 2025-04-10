@@ -10,7 +10,6 @@ These workflows handle the donor lifecycle from initial contact through active d
 
 ```mermaid
 sequenceDiagram
-sequenceDiagram
     participant BoH_BD
     participant Leads
     participant DonorCandidate
