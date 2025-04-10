@@ -10,8 +10,6 @@ These workflows handle the donor lifecycle from initial contact through active d
 
 ```mermaid
 sequenceDiagram
-    actor B1 as BoH
-    actor D1 as Donor
     opt Candidate
         rect rgb(250,250,200)
         B1 -->> D1: Welcome/Initial Outreach
