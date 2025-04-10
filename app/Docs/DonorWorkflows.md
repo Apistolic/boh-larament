@@ -20,7 +20,6 @@ flowchart TD
     F --> |Stage: donor_candidate_stagnant| G[Standard Donor Candidate Drip:fill:#0000ff,stroke:#fff]
 
 journey
-    title Optional Title
     section SectionName
         TaskName: Score: Actor(s)
         AnotherTask: Score: Actor(s)
