@@ -17,14 +17,13 @@ classDef blueStyle fill:#0000ff,stroke:#fff;
 flowchart TD
     %% New Donor Candidate Process
     title New Donor Candidate Process
-    A(New Donor Contact Created/Updated) -->|Stage: donor_candidate| B[New Donor Candidate Welcome/Initial Outreach]
+    A(New Donor Contact Created/Updated:fill:#ff0000,stroke:#333,stroke-width:2px) -->|Stage: donor_candidate| B[New Donor Candidate Welcome/Initial Outreach]
     B --> C[New Donor Confirmed?]
     C --> |Yes| D{{Continue with Donor Activation}}
     C --> |No| E[Send 2nd Outreach]
     E --> F[Send 3rd Outreach]
-    F --> |Stage: donor_candidate_stagnant| G[[Standard Donor Candidate Drip]]
-    class A blueStyle;
-    class F redStyle;
+    F --> |Stage: donor_candidate_stagnant| G[Standard Donor Candidate Drip:fill:#0000ff,stroke:#fff]
+    class F blueStyle;
 
 journey
     title Optional Title
