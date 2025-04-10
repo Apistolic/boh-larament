@@ -11,11 +11,9 @@ These workflows handle the donor lifecycle from initial contact through active d
 ```mermaid
 sequenceDiagram
     opt Candidate
-        rect rgb(250,250,200)
-        B1 -->> D1: Welcome/Initial Outreach
-        D1 -->> B1: Donor Vitals
-        D1 -->> B1: Donation
-        end
+        BoH BD -->> Donor: Welcome/Initial Outreach
+        Donor -->> BoH BD: Donor Vitals
+        Donor -->> BoH BD: Donation
     end
 ```
 
