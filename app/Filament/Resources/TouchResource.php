@@ -6,13 +6,12 @@ use App\Filament\Resources\TouchResource\Pages;
 use App\Models\Touch;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 
-class TouchResource extends Resource
+class TouchResource extends BaseResource
 {
     protected static ?string $model = Touch::class;
 

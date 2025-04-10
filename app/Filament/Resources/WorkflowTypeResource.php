@@ -6,18 +6,17 @@ use App\Filament\Resources\WorkflowTypeResource\Pages;
 use App\Models\WorkflowType;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
-class WorkflowTypeResource extends Resource
+class WorkflowTypeResource extends BaseResource
 {
     protected static ?string $model = WorkflowType::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Workflow Management';
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?int $navigationSort = 82;
 
     public static function form(Form $form): Form
     {

@@ -10,7 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class EmailSendResource extends Resource
+class EmailSendResource extends BaseResource
 {
     protected static ?string $model = EmailSend::class;
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
@@ -81,8 +81,4 @@ class EmailSendResource extends Resource
         ];
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 }

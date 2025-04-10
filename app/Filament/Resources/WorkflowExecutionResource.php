@@ -7,12 +7,10 @@ use App\Filament\Resources\WorkflowExecutionResource\RelationManagers;
 use App\Models\WorkflowExecution;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class WorkflowExecutionResource extends Resource
+class WorkflowExecutionResource extends BaseResource
 {
     protected static ?string $model = WorkflowExecution::class;
 
@@ -129,8 +127,4 @@ class WorkflowExecutionResource extends Resource
             ->latest();
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 }

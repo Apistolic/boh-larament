@@ -7,21 +7,20 @@ use App\Filament\Resources\TouchTemplateBlockResource\Pages;
 use App\Models\TouchTemplateBlock;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class TouchTemplateBlockResource extends Resource
+class TouchTemplateBlockResource extends BaseResource
 {
     use HasHtmlPreview;
 
     protected static ?string $model = TouchTemplateBlock::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-puzzle-piece';
-    protected static ?string $navigationGroup = 'Templates';
-    protected static ?int $navigationSort = 73;
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?int $navigationSort = 62;
 
     public static function form(Form $form): Form
     {
@@ -138,10 +137,5 @@ class TouchTemplateBlockResource extends Resource
         return TouchTemplateBlock::where('is_active', true)
             ->orderBy('name')
             ->get();
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
     }
 }

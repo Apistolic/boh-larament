@@ -6,18 +6,17 @@ use App\Filament\Resources\WorkflowCompletionTriggerResource\Pages;
 use App\Models\WorkflowCompletionTrigger;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class WorkflowCompletionTriggerResource extends Resource
+class WorkflowCompletionTriggerResource extends BaseResource
 {
     protected static ?string $model = WorkflowCompletionTrigger::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-flag';
-    protected static ?string $navigationGroup = 'Workflow Management';
-    protected static ?int $navigationSort = 30;
-    protected static ?string $modelLabel = 'Completion Trigger';
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?int $navigationSort = 84;
+    protected static ?string $modelLabel = 'WF Completion Events';
 
     public static function form(Form $form): Form
     {

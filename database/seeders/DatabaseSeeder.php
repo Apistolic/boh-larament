@@ -16,9 +16,9 @@ class DatabaseSeeder extends Seeder
 //            MediaSeeder::class,          // First: Seed media files
             LifecycleSeeder::class,      // First: Seed lifecycle categories and stages
             ContactSeeder::class,
+            WorkflowTypeSeeder::class,
             WorkflowSeeder::class,
             WorkflowExecutionSeeder::class, // This now creates touches automatically via action handlers
-            WorkflowTypeSeeder::class,
             WorkflowTriggerSeeder::class,
             TouchTemplateSeeder::class,
             TouchTemplateBlocksSeeder::class, // After media: blocks use media files

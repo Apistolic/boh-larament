@@ -8,10 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::create('workflow_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->integer('sort_order')->default(0);
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
         Schema::create('workflows', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('type');
+            $table->foreignId('workflow_type_id')->constrained();
             $table->text('description')->nullable();
             $table->string('trigger_type');
             $table->json('trigger_criteria')->nullable();
@@ -23,6 +34,7 @@ return new class extends Migration
             $table->text('class')->nullable();
             $table->text('arguments')->nullable();
             $table->text('output')->nullable();
+            $table->text('sequence_diagram')->nullable();
             $table->string('status')->default('pending')->index();
 
             $table->timestamps();
@@ -43,5 +55,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('contact_workflow');
         Schema::dropIfExists('workflows');
+        Schema::dropIfExists('workflow_types');
     }
 };

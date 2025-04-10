@@ -6,17 +6,16 @@ use App\Filament\Resources\LifecycleCategoryResource\Pages;
 use App\Models\LifecycleCategory;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class LifecycleCategoryResource extends Resource
+class LifecycleCategoryResource extends BaseResource
 {
     protected static ?string $model = LifecycleCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
-    protected static ?string $navigationGroup = 'Lifecycles';
-    protected static ?int $navigationSort = 61;
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?int $navigationSort = 91;
 
     public static function form(Form $form): Form
     {
@@ -124,8 +123,4 @@ class LifecycleCategoryResource extends Resource
         ];
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 }

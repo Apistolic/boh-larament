@@ -6,12 +6,11 @@ use App\Filament\Resources\MediaResource\Pages;
 use App\Models\Media;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 
-class MediaResource extends Resource
+class MediaResource extends BaseResource
 {
     protected static ?string $model = Media::class;
 

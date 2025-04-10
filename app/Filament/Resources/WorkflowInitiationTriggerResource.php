@@ -6,18 +6,17 @@ use App\Filament\Resources\WorkflowInitiationTriggerResource\Pages;
 use App\Models\WorkflowInitiationTrigger;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class WorkflowInitiationTriggerResource extends Resource
+class WorkflowInitiationTriggerResource extends BaseResource
 {
     protected static ?string $model = WorkflowInitiationTrigger::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-play';
-    protected static ?string $navigationGroup = 'Workflow Management';
-    protected static ?int $navigationSort = 20;
-    protected static ?string $modelLabel = 'Initiation Trigger';
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?int $navigationSort = 83;
+    protected static ?string $modelLabel = 'WF Initiation Events';
 
     public static function form(Form $form): Form
     {

@@ -10,17 +10,16 @@ use App\Models\TouchTemplateBlock;
 use App\Models\TouchTemplateLayout;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class TouchTemplateResource extends Resource
+class TouchTemplateResource extends BaseResource
 {
     protected static ?string $model = TouchTemplate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
-    protected static ?string $navigationGroup = 'Templates';
-    protected static ?int $navigationSort = 71;
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?int $navigationSort = 61;
 
     public static function form(Form $form): Form
     {
@@ -156,9 +155,4 @@ class TouchTemplateResource extends Resource
         ];
     }
 
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 }

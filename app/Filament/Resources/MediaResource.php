@@ -7,7 +7,6 @@ use App\Filament\Resources\MediaResource\RelationManagers;
 use App\Models\Media;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,14 +14,14 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
 
 
-class MediaResource extends Resource
+class MediaResource extends BaseResource
 {
     protected static ?string $model = Media::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-photo'; //rectangle-stack';
     protected static ?string $navigationGroup = 'Settings';
     
-    protected static ?int $navigationSort = 91;
+    protected static ?int $navigationSort = 51;
 
     public static function form(Form $form): Form
     {
@@ -112,9 +111,5 @@ class MediaResource extends Resource
             'create' => Pages\CreateMedia::route('/create'),
             'edit' => Pages\EditMedia::route('/{record}/edit'),
         ];
-    }
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
     }
 }

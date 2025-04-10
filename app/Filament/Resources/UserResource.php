@@ -16,13 +16,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
-class UserResource extends Resource
+class UserResource extends BaseResource
 {
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 99;
+    protected static ?int $navigationSort = 52;
 
 
     protected static ?string $recordTitleAttribute = 'name';
@@ -126,11 +126,6 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
     }
 
 }

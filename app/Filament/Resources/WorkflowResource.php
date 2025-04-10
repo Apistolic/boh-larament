@@ -8,17 +8,17 @@ use App\Models\Workflow;
 use App\Models\WorkflowType;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\View;
 
-class WorkflowResource extends Resource
+class WorkflowResource extends BaseResource
 {
     protected static ?string $model = Workflow::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Engagement';
-    protected static ?int $navigationSort = 91;
+    protected static ?int $navigationSort = 81;
 
     public static function form(Form $form): Form
     {
@@ -64,6 +64,17 @@ class WorkflowResource extends Resource
                             ->keyLabel('Action')
                             ->valueLabel('Parameters')
                             ->addButtonLabel('Add Action')
+                            ->columnSpanFull(),
+                    ]),
+
+                Forms\Components\Section::make('Sequence Diagram')
+                    ->schema([
+                        Forms\Components\Textarea::make('sequence_diagram')
+                            ->label('Mermaid Sequence Diagram')
+                            ->helperText('Enter Mermaid sequence diagram code here')
+                            ->columnSpanFull(),
+                        View::make('components.mermaid-diagram')
+                            ->viewData(['content' => fn ($get) => $get('sequence_diagram')])
                             ->columnSpanFull(),
                     ]),
 
@@ -162,10 +173,5 @@ class WorkflowResource extends Resource
             'edit' => Pages\EditWorkflow::route('/{record}/edit'),
             'view' => Pages\ViewWorkflow::route('/{record}'),
         ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('is_active', true)->count();
     }
 }

@@ -7,19 +7,18 @@ use App\Filament\Resources\TouchTemplateLayoutResource\Pages;
 use App\Models\TouchTemplateLayout;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class TouchTemplateLayoutResource extends Resource
+class TouchTemplateLayoutResource extends BaseResource
 {
     use HasHtmlPreview;
 
     protected static ?string $model = TouchTemplateLayout::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Templates';
-    protected static ?int $navigationSort = 72;
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?int $navigationSort = 63;
 
     public static function form(Form $form): Form
     {
@@ -119,10 +118,5 @@ class TouchTemplateLayoutResource extends Resource
             'create' => Pages\CreateTouchTemplateLayout::route('/create'),
             'edit' => Pages\EditTouchTemplateLayout::route('/{record}/edit'),
         ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
     }
 }

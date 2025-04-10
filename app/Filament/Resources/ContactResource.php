@@ -9,7 +9,6 @@ use App\Models\LifecycleStage;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Infolists;
@@ -18,7 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
-class ContactResource extends Resource
+class ContactResource extends BaseResource
 {
     protected static ?string $model = Contact::class;
 
@@ -307,8 +306,4 @@ class ContactResource extends Resource
             ]);
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 }
