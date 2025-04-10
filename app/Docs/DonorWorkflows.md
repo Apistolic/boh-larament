@@ -10,10 +10,9 @@ These workflows handle the donor lifecycle from initial contact through active d
 
 ```mermaid
 sequenceDiagram
-    Alice->>+John: Hello John, how are you?
-    Alice->>+John: John, can you hear me?
-    John-->>-Alice: Hi Alice, I can hear you!
-    John-->>-Alice: I feel great!
+    BoH->>+Donor Candidate: Welcome/Initial Outreach
+    Donor Candidate->>+BoH: Donor Vitals
+    Donor Candidate->>+BoH: Donation
 ```
 
 ```mermaid
