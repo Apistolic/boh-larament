@@ -11,7 +11,7 @@ These workflows handle the donor lifecycle from initial contact through active d
 ```mermaid
 
 flowchart TD
-    title "New Donor Candidate Process"
+    %% New Donor Candidate Process
     A(New Donor Contact Created/Updated:fill:#ff0000,stroke:#333,stroke-width:2px) -->|Stage: donor_candidate| B[New Donor Candidate Welcome/Initial Outreach]
     B --> C[New Donor Confirmed?]
     C --> |Yes| D{{Continue with Donor Activation}}
