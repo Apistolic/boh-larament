@@ -10,11 +10,21 @@ These workflows handle the donor lifecycle from initial contact through active d
 
 ```mermaid
 sequenceDiagram
-    opt Candidate
-        BoH BD -->> Donor: Welcome/Initial Outreach
-        Donor -->> BoH BD: Donor Vitals
-        Donor -->> BoH BD: Donation
-    end
+sequenceDiagram
+    participant BoH_BD
+    participant Leads
+    participant DonorCandidate
+    participant DonorActive
+    
+    Leads -->> BoH_BD: New Donor Lead
+    BoH_BD -->> DonorCandidate: Welcome/Initial Outreach
+    DonorCandidate -->> BoH_BD: Donor Vitals
+    DonorCandidate -->> BoH_BD: Donor Process Completed
+    DonorCandidate -->> BoH_BD: Completion Acknowledged
+    DonorCandidate -->> DonorActive: Contact Status Changed
+    DonorActive -->> BoH_BD: Acknowledgment of Donor Candidate Completion
+    destroy DonorCandidate
+    DonorActive -->> BoH_BD: Donation
 ```
 
 ```mermaid
