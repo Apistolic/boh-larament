@@ -9,6 +9,14 @@ These workflows handle the donor lifecycle from initial contact through active d
 ### New Donor Candidate Process
 
 ```mermaid
+sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!
+```
+
+```mermaid
 flowchart TD
     %% New Donor Candidate Process
     A(New Donor Contact Created/Updated:fill:#ff0000,stroke:#333,stroke-width:2px) -->|Stage: donor_candidate| B[New Donor Candidate Welcome/Initial Outreach]
