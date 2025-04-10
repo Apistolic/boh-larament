@@ -11,7 +11,7 @@ These workflows handle the donor lifecycle from initial contact through active d
 ```mermaid
 flowchart TD
     %% New Donor Candidate Process
-    A[New Donor Contact Created/Updated] -->|Stage: donor_candidate| B[New Donor Candidate Welcome/Initial Outreach]
+    A(New Donor Contact Created/Updated) -->|Stage: donor_candidate| B[New Donor Candidate Welcome/Initial Outreach]
     B --> C[New Donor Confirmed?]
     C --> |Yes| D{{Continue with Donor Activation}}
     C --> |No| E[Send 2nd Outreach]
@@ -26,7 +26,7 @@ flowchart TD
     %% New Donor Candidate Confirmed
     A[New Donor Confirmed] -->|Stage: donor_candidate_activation| B[Assign Development Team Member]
     B --> C[Schedule Initial Donor Meeting]
-    C --> D[Initial Donor Meeting]
+    C --> D[Initial/Follow-up Donor Meeting(s)]
     D --> E[Donation Received?]
     E --> |No| D
     E --> |Yes| F{{Donation Received}}
@@ -38,17 +38,14 @@ flowchart TD
     H --> L[Schedule 180-day Followups]
 ```
 
-### Donor Activation/Renewal
+### Donor Renewal
 
 ```mermaid
 flowchart TD
-    %% Donor Activation/Renewal
-    A[Donation Received] -->|donor_candidate -> donor| B[New Donor Milestone]
-    C --> D[Donor Activation]
-    C --> E[Send Thank You]
-    C --> F[Add to Newsletter]
-    C --> G[Schedule 30-day Followup]
-    C --> H[Schedule 180-day Followups]
+    %% Donor Renewal
+    A[Renewal Donation Received] --> B[New Donation Milestone]
+    B --> C[Donor Renewal]
+    C --> D[Send Thank You]
 ```
 
 ## Neighboring Volunteer Workflows
