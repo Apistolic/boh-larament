@@ -7,17 +7,16 @@ use App\Models\Touch;
 use App\Models\TouchTemplate;
 use App\Notifications\WelcomeEmail;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Log;
 
-class WelcomeEmailHandler extends BaseActionHandler
+class SendWelcomeKitHandler extends BaseActionHandler
 {
     protected function handleAction(Contact $contact, array $parameters): array
     {
         // Get the template from parameters
-        $templateName = $parameters['template'] ?? 'Welcome New Donor';
+        $templateName = $parameters['template'] ?? 'Volunteer Welcome Kit';
         $delay = $parameters['delay'] ?? 0;
 
-        Log::info("WelcomeEmailHandler: Handling action", [
+        \Log::info("SendWelcomeKitHandler: Handling action", [
             'contact' => $contact->id,
             'template' => $templateName,
             'delay' => $delay,
@@ -27,11 +26,11 @@ class WelcomeEmailHandler extends BaseActionHandler
         // Find the template
         $template = TouchTemplate::where('name', $templateName)->first();
         if (!$template) {
-            Log::error("WelcomeEmailHandler: Template not found", ['template_name' => $templateName]);
+            \Log::error("SendWelcomeKitHandler: Template not found", ['template_name' => $templateName]);
             throw new \RuntimeException("Template not found: {$templateName}");
         }
 
-        Log::info("WelcomeEmailHandler: Found template", ['template_id' => $template->id]);
+        \Log::info("SendWelcomeKitHandler: Found template", ['template_id' => $template->id]);
 
         // Create the touch
         $touch = Touch::create([
@@ -45,9 +44,9 @@ class WelcomeEmailHandler extends BaseActionHandler
             'scheduled_for' => now()->addDays($delay),
         ]);
 
-        Log::info("WelcomeEmailHandler: Created touch", ['touch_id' => $touch->id]);
+        \Log::info("SendWelcomeKitHandler: Created touch", ['touch_id' => $touch->id]);
 
-        // Send the welcome email
+        // Send the welcome kit email
         try {
             Notification::send($contact, new WelcomeEmail($template));
             
@@ -57,7 +56,7 @@ class WelcomeEmailHandler extends BaseActionHandler
                 'executed_at' => now(),
             ]);
 
-            Log::info("WelcomeEmailHandler: Email sent and touch updated", ['touch_id' => $touch->id]);
+            \Log::info("SendWelcomeKitHandler: Email sent and touch updated", ['touch_id' => $touch->id]);
 
             return [
                 'email_sent' => true,
@@ -66,7 +65,7 @@ class WelcomeEmailHandler extends BaseActionHandler
                 'touch_id' => $touch->id,
             ];
         } catch (\Exception $e) {
-            Log::error("WelcomeEmailHandler: Failed to send email", [
+            \Log::error("SendWelcomeKitHandler: Failed to send email", [
                 'touch_id' => $touch->id,
                 'error' => $e->getMessage()
             ]);
@@ -80,14 +79,5 @@ class WelcomeEmailHandler extends BaseActionHandler
 
             throw $e;
         }
-    }
-
-    protected function getTouchContent(array $parameters, array $result): string
-    {
-        return sprintf(
-            "Sent welcome email using template: %s (Touch ID: %d)",
-            $parameters['template'] ?? 'default',
-            $result['touch_id'] ?? 0
-        );
     }
 }

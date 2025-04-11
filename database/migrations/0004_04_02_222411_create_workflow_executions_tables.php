@@ -16,6 +16,8 @@ return new class extends Migration
             $table->json('trigger_snapshot')->nullable(); // Store trigger data
             $table->json('results')->nullable();
             $table->text('error')->nullable();
+            $table->timestamp('started_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });
 

@@ -21,7 +21,10 @@ class WorkflowSeeder extends Seeder
                     'lifecycle_stage' => 'lead',
                 ],
                 'actions' => [
-                    'send_welcome_email' => 'initial_outreach',
+                    'send_welcome_email' => [
+                        'template' => 'Welcome New Donor',
+                        'delay' => 0
+                    ],
                     'create_followup_sequence' => [
                         'email_followup_1' => '+3 days',
                         'email_followup_2' => '+7 days',
@@ -61,8 +64,14 @@ class WorkflowSeeder extends Seeder
                     'previous_stage' => null,
                 ],
                 'actions' => [
-                    'send_welcome_email' => 'donor_candidate_welcome',
-                    'create_task' => 'schedule_initial_meeting',
+                    'send_welcome_email' => [
+                        'template' => 'Welcome New Donor',
+                        'delay' => 0
+                    ],
+                    'create_task' => [
+                        'type' => 'schedule_initial_meeting',
+                        'due_in' => '+7 days'
+                    ],
                     'assign_owner' => 'random_development_team',
                 ],
                 'is_active' => true,
@@ -77,9 +86,16 @@ class WorkflowSeeder extends Seeder
                     'previous_stage' => 'donor_candidate',
                 ],
                 'actions' => [
-                    'send_thank_you' => 'first_donation_thanks',
+                    'send_thank_you' => [
+                        'template' => 'Thank You for Your Donation',
+                        'delay' => 0
+                    ],
                     'add_to_newsletter' => 'donor_newsletter',
-                    'schedule_followup' => '30_days',
+                    'schedule_followup' => [
+                        'type' => 'check_in',
+                        'timing' => '30_days',
+                        'assignee' => 'program_coordinator'
+                    ],
                 ],
                 'is_active' => true,
             ],
@@ -94,8 +110,14 @@ class WorkflowSeeder extends Seeder
                     'lifecycle_stage' => 'neighbor_candidate',
                 ],
                 'actions' => [
-                    'send_info_packet' => 'volunteer_information',
-                    'schedule_orientation' => 'next_available',
+                    'send_info_packet' => [
+                        'template' => 'Volunteer Information Packet',
+                        'delay' => 0
+                    ],
+                    'schedule_orientation' => [
+                        'type' => 'next_available',
+                        'due_in' => '+14 days'
+                    ],
                 ],
                 'is_active' => true,
             ],
@@ -109,8 +131,14 @@ class WorkflowSeeder extends Seeder
                     'previous_stage' => 'neighbor_candidate',
                 ],
                 'actions' => [
-                    'send_welcome_kit' => 'volunteer_welcome',
-                    'schedule_training' => 'initial_training',
+                    'send_welcome_kit' => [
+                        'template' => 'Welcome New Volunteer',
+                        'delay' => 0
+                    ],
+                    'schedule_training' => [
+                        'type' => 'initial_training',
+                        'due_in' => '+21 days'
+                    ],
                     'assign_mentor' => 'experienced_volunteer',
                 ],
                 'is_active' => true,
@@ -126,9 +154,18 @@ class WorkflowSeeder extends Seeder
                     'lifecycle_stage' => 'mom_candidate',
                 ],
                 'actions' => [
-                    'send_application' => 'mom_program_application',
-                    'create_task' => 'review_application',
-                    'schedule_interview' => 'initial_interview',
+                    'send_application' => [
+                        'template' => 'Mom Program Application',
+                        'delay' => 0
+                    ],
+                    'create_task' => [
+                        'type' => 'review_application',
+                        'due_in' => '+7 days'
+                    ],
+                    'schedule_interview' => [
+                        'type' => 'initial_interview',
+                        'due_in' => '+14 days'
+                    ],
                 ],
                 'is_active' => true,
             ],
@@ -142,9 +179,15 @@ class WorkflowSeeder extends Seeder
                     'previous_stage' => 'mom_candidate',
                 ],
                 'actions' => [
-                    'send_welcome_packet' => 'mom_program_welcome',
+                    'send_welcome_packet' => [
+                        'template' => 'Welcome to Mom Program',
+                        'delay' => 0
+                    ],
                     'assign_mentor' => 'mom_program_mentor',
-                    'schedule_orientation' => 'next_mom_orientation',
+                    'schedule_orientation' => [
+                        'type' => 'next_mom_orientation',
+                        'due_in' => '+21 days'
+                    ],
                 ],
                 'is_active' => true,
             ],
@@ -158,9 +201,18 @@ class WorkflowSeeder extends Seeder
                     'previous_stage' => 'mom_participant',
                 ],
                 'actions' => [
-                    'send_congratulations' => 'mom_graduation_package',
-                    'schedule_event' => 'graduation_ceremony',
-                    'create_task' => 'prepare_graduation_certificate',
+                    'send_congratulations' => [
+                        'template' => 'Congratulations on Graduation',
+                        'delay' => 0
+                    ],
+                    'schedule_event' => [
+                        'type' => 'graduation_ceremony',
+                        'due_in' => '+30 days'
+                    ],
+                    'create_task' => [
+                        'type' => 'prepare_graduation_certificate',
+                        'due_in' => '+14 days'
+                    ],
                     'add_to_alumni' => 'mom_program_alumni',
                     'schedule_followup' => [
                         'type' => 'check_in',
@@ -183,8 +235,14 @@ class WorkflowSeeder extends Seeder
                     'previous_attendance' => true,
                 ],
                 'actions' => [
-                    'send_invitation' => 'gala_invitation_package',
-                    'create_task' => 'followup_call',
+                    'send_invitation' => [
+                        'template' => 'Gala Invitation',
+                        'delay' => 0
+                    ],
+                    'create_task' => [
+                        'type' => 'followup_call',
+                        'due_in' => '+7 days'
+                    ],
                 ],
                 'is_active' => true,
             ],
@@ -197,7 +255,10 @@ class WorkflowSeeder extends Seeder
                     'event_registration' => 'gala_confirmed',
                 ],
                 'actions' => [
-                    'send_confirmation' => 'gala_registration_confirmation',
+                    'send_confirmation' => [
+                        'template' => 'Gala Registration Confirmation',
+                        'delay' => 0
+                    ],
                     'add_to_seating' => 'gala_seating_chart',
                     'create_name_tag' => 'gala_name_tags',
                 ],
@@ -212,7 +273,10 @@ class WorkflowSeeder extends Seeder
                     'auction_status' => 'won',
                 ],
                 'actions' => [
-                    'send_congratulations' => 'auction_winner_congrats',
+                    'send_congratulations' => [
+                        'template' => 'Auction Winner Congratulations',
+                        'delay' => 0
+                    ],
                     'process_payment' => 'auction_payment',
                     'coordinate_delivery' => 'auction_item_delivery',
                 ],
@@ -228,9 +292,15 @@ class WorkflowSeeder extends Seeder
                     'status' => 'confirmed',
                 ],
                 'actions' => [
-                    'send_schedule' => 'gala_volunteer_schedule',
+                    'send_schedule' => [
+                        'template' => 'Gala Volunteer Schedule',
+                        'delay' => 0
+                    ],
                     'add_to_roster' => 'gala_volunteer_roster',
-                    'send_reminder' => ['timing' => 'day_before'],
+                    'send_reminder' => [
+                        'type' => 'reminder',
+                        'timing' => 'day_before'
+                    ],
                 ],
                 'is_active' => true,
             ],

@@ -19,6 +19,20 @@ class TouchResource extends BaseResource
     protected static ?string $navigationGroup = 'Engagement';
     protected static ?int $navigationSort = 93;
 
+    public static function getNavigationBadge(): ?string
+    {
+        $total = static::getModel()::count();
+        $pending = static::getModel()::whereIn('status', [Touch::STATUS_PENDING, Touch::STATUS_SCHEDULED])->count();
+        return $total . ' (' . $pending . ' pending)';
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return static::getModel()::whereIn('status', [Touch::STATUS_PENDING, Touch::STATUS_SCHEDULED])->exists()
+            ? 'warning'
+            : 'primary';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -172,11 +186,6 @@ class TouchResource extends BaseResource
             'create' => Pages\CreateTouch::route('/create'),
             'edit' => Pages\EditTouch::route('/{record}/edit'),
         ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::whereIn('status', [Touch::STATUS_PENDING, Touch::STATUS_SCHEDULED])->count();
     }
 
     public static function getRelations(): array

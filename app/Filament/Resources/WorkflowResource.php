@@ -72,9 +72,15 @@ class WorkflowResource extends BaseResource
                         Forms\Components\Textarea::make('sequence_diagram')
                             ->label('Mermaid Sequence Diagram')
                             ->helperText('Enter Mermaid sequence diagram code here')
+                            ->default('sequenceDiagram
+    participant User
+    participant System
+    User->>System: Action
+    System-->>User: Response')
+                            ->live()
                             ->columnSpanFull(),
-                        View::make('components.mermaid-diagram')
-                            ->viewData(['content' => fn ($get) => $get('sequence_diagram')])
+                        Forms\Components\View::make('components.mermaid-diagram')
+                            ->view('components.mermaid-diagram')
                             ->columnSpanFull(),
                     ]),
 

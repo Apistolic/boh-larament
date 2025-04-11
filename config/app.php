@@ -135,9 +135,10 @@ return [
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\FilamentServiceProvider::class,
+        App\Providers\FilamentTableServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
     ])->toArray(),
 
     /*

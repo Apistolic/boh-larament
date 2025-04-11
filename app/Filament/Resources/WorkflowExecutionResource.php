@@ -7,7 +7,12 @@ use App\Filament\Resources\WorkflowExecutionResource\RelationManagers;
 use App\Models\WorkflowExecution;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
 
 class WorkflowExecutionResource extends BaseResource
@@ -62,25 +67,25 @@ class WorkflowExecutionResource extends BaseResource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('workflow.name')
+                TextColumn::make('workflow.name')
                     ->label('Workflow')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('contact.full_name')
+                TextColumn::make('contact.full_name')
                     ->label('Contact')
                     ->searchable(['contacts.first_name', 'contacts.last_name'])
                     ->sortable(['contacts.first_name', 'contacts.last_name']),
-                Tables\Columns\BadgeColumn::make('status')
+                BadgeColumn::make('status')
                     ->colors([
                         'warning' => WorkflowExecution::STATUS_PENDING,
                         'primary' => WorkflowExecution::STATUS_IN_PROGRESS,
                         'success' => WorkflowExecution::STATUS_COMPLETED,
                         'danger' => WorkflowExecution::STATUS_FAILED,
                     ]),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -93,15 +98,40 @@ class WorkflowExecutionResource extends BaseResource
                         WorkflowExecution::STATUS_IN_PROGRESS => 'In Progress',
                         WorkflowExecution::STATUS_COMPLETED => 'Completed',
                         WorkflowExecution::STATUS_FAILED => 'Failed',
-                    ]),
+                    ])
+                    ->columnSpanFull(),
                 Tables\Filters\SelectFilter::make('workflow')
-                    ->relationship('workflow', 'name'),
+                    ->relationship('workflow', 'name')
+                    ->columnSpanFull(),
+                Tables\Filters\SelectFilter::make('lifecycle')
+                    ->label('Lifecycle Category')
+                    ->options([
+                        'all' => 'All',
+                        'donor' => 'Donor',
+                        'mom' => 'Mom',
+                        'neighbor' => 'Neighbor',
+                        'gala' => 'Gala',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if (empty($data['value']) || $data['value'] === 'all') {
+                            return $query;
+                        }
+                        return $query->whereHas('contact.lifecycleStages', fn ($q) => $q->where('name', 'like', ucfirst($data['value']) . '%'));
+                    })
+                    ->columnSpanFull(),
             ])
+            ->filtersFormColumns(1)
+            ->filtersTriggerAction(
+                fn (Action $action) => $action->button()->label('Filters'),
+            )
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                // No bulk actions needed for executions
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

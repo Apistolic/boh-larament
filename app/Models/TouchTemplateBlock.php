@@ -25,6 +25,10 @@ class TouchTemplateBlock extends Model
         'default_values' => 'json',
     ];
 
+    protected $appends = [
+        'formatted_html',
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -34,6 +38,49 @@ class TouchTemplateBlock extends Model
                 $block->slug = Str::slug($block->name);
             }
         });
+    }
+
+    public function getFormattedHtmlAttribute()
+    {
+        if (empty($this->html_content)) {
+            return '';
+        }
+
+        $html = $this->html_content;
+        
+        // Remove extra whitespace between tags
+        $html = preg_replace('/>\s+</', ">\n<", $html);
+        
+        // Add newlines after closing tags
+        $html = preg_replace('/<\/([^>]*)>/', "</$1>\n", $html);
+        
+        // Add newlines before opening tags (except inline elements)
+        $html = preg_replace('/(?<!^)(<(?!\/|a|span|strong|em|i|b|u|small)[^>]*>)/', "\n$1", $html);
+        
+        // Indent based on nesting level
+        $lines = explode("\n", $html);
+        $level = 0;
+        $formatted = [];
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) continue;
+            
+            // Decrease level for closing tags
+            if (preg_match('/<\/[^>]*>/', $line)) {
+                $level = max(0, $level - 1);
+            }
+            
+            // Add indentation
+            $formatted[] = str_repeat('    ', $level) . $line;
+            
+            // Increase level for opening tags (not self-closing)
+            if (preg_match('/<[^\/][^>]*[^\/]>/', $line)) {
+                $level++;
+            }
+        }
+        
+        return implode("\n", $formatted);
     }
 
     public function parseContent(array $variables = [], int $maxDepth = 5): array

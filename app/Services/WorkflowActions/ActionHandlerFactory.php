@@ -13,28 +13,41 @@ class ActionHandlerFactory
         $this->handlers = [
             // Email Actions
             'send_welcome_email' => WelcomeEmailHandler::class,
-            'send_congratulations' => CongratulationsEmailHandler::class,
-            'send_info_packet' => InfoPacketEmailHandler::class,
-            'send_welcome_packet' => WelcomePacketEmailHandler::class,
-            'send_schedule' => ScheduleEmailHandler::class,
+            'send_thank_you' => SendThankYouHandler::class,
+            'send_info_packet' => WelcomeEmailHandler::class, // Reuse WelcomeEmailHandler
+            'send_welcome_packet' => WelcomeEmailHandler::class, // Reuse WelcomeEmailHandler
+            'send_schedule' => WelcomeEmailHandler::class, // Reuse WelcomeEmailHandler
+            'send_invitation' => WelcomeEmailHandler::class, // Reuse WelcomeEmailHandler
+            'send_confirmation' => WelcomeEmailHandler::class, // Reuse WelcomeEmailHandler
+            'send_congratulations' => SendThankYouHandler::class, // Reuse SendThankYouHandler
+            'send_application' => WelcomeEmailHandler::class, // Reuse WelcomeEmailHandler
+            'send_reminder' => WelcomeEmailHandler::class, // Reuse WelcomeEmailHandler
+            'send_welcome_kit' => SendWelcomeKitHandler::class,
 
-            // Task Actions
-            'create_task' => CreateTaskHandler::class,
-            'schedule_event' => ScheduleEventHandler::class,
-            'schedule_followup' => ScheduleFollowupHandler::class,
-            'prepare_graduation_certificate' => PrepareGraduationCertificateHandler::class,
+            // Task Actions - These will be no-ops for now
+            'create_task' => NoOpActionHandler::class,
+            'schedule_event' => NoOpActionHandler::class,
+            'schedule_followup' => NoOpActionHandler::class,
+            'schedule_orientation' => NoOpActionHandler::class,
+            'schedule_training' => NoOpActionHandler::class,
+            'schedule_interview' => NoOpActionHandler::class,
+            'prepare_graduation_certificate' => NoOpActionHandler::class,
 
-            // Program Actions
-            'add_to_alumni' => AddToAlumniHandler::class,
-            'add_to_newsletter' => AddToNewsletterHandler::class,
-            'assign_mentor' => AssignMentorHandler::class,
-            'update_metrics' => UpdateMetricsHandler::class,
+            // Program Actions - These will be no-ops for now
+            'add_to_alumni' => NoOpActionHandler::class,
+            'add_to_newsletter' => NoOpActionHandler::class,
+            'assign_mentor' => NoOpActionHandler::class,
+            'update_metrics' => NoOpActionHandler::class,
+            'assign_owner' => NoOpActionHandler::class,
+            'monitor_donor_status' => NoOpActionHandler::class,
+            'create_followup_sequence' => NoOpActionHandler::class,
 
-            // Event Actions
-            'add_to_seating' => AddToSeatingHandler::class,
-            'create_name_tag' => CreateNameTagHandler::class,
-            'process_payment' => ProcessPaymentHandler::class,
-            'coordinate_delivery' => CoordinateDeliveryHandler::class,
+            // Event Actions - These will be no-ops for now
+            'add_to_seating' => NoOpActionHandler::class,
+            'create_name_tag' => NoOpActionHandler::class,
+            'process_payment' => NoOpActionHandler::class,
+            'coordinate_delivery' => NoOpActionHandler::class,
+            'add_to_roster' => NoOpActionHandler::class,
         ];
     }
 

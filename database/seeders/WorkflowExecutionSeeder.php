@@ -30,9 +30,13 @@ class WorkflowExecutionSeeder extends Seeder
             return;
         }
 
+        $this->command->info('Found ' . $workflows->count() . ' workflows and ' . $contacts->count() . ' contacts');
+
         foreach ($workflows as $workflow) {
             // Create 2-4 executions for each workflow
             $numExecutions = rand(2, 4);
+            
+            $this->command->info("Creating {$numExecutions} executions for workflow: {$workflow->name}");
             
             for ($i = 0; $i < $numExecutions; $i++) {
                 $contact = $contacts->random();
@@ -41,7 +45,7 @@ class WorkflowExecutionSeeder extends Seeder
                 $execution = WorkflowExecution::create([
                     'workflow_id' => $workflow->id,
                     'contact_id' => $contact->id,
-                    'status' => $this->getRandomStatus(),
+                    'status' => WorkflowExecution::STATUS_PENDING,
                     'trigger_snapshot' => [
                         'contact' => [
                             'id' => $contact->id,
@@ -57,72 +61,14 @@ class WorkflowExecutionSeeder extends Seeder
                     'updated_at' => $startDate->addMinutes(rand(5, 60)),
                 ]);
 
-                // Create action executions
-                foreach ($workflow->actions as $action => $parameters) {
-                    $actionStatus = $execution->status === WorkflowExecution::STATUS_FAILED ? 
-                        WorkflowActionExecution::STATUS_FAILED :
-                        $this->getRandomActionStatus();
+                $this->command->info("  - Created execution {$execution->id} for contact: {$contact->first_name} {$contact->last_name}");
 
-                    $startedAt = $execution->created_at->addMinutes(rand(1, 5));
-                    $completedAt = $actionStatus !== WorkflowActionExecution::STATUS_PENDING ? 
-                        $startedAt->addMinutes(rand(1, 15)) : 
-                        null;
-
-                    $actionExecution = $execution->actionExecutions()->create([
-                        'action' => $action,
-                        'parameters' => $parameters,
-                        'status' => $actionStatus,
-                        'started_at' => $startedAt,
-                        'completed_at' => $completedAt,
-                        'created_at' => $startedAt,
-                        'updated_at' => $completedAt ?? $startedAt,
-                    ]);
-
-                    // Add results or errors based on status
-                    if ($actionStatus === WorkflowActionExecution::STATUS_COMPLETED) {
-                        // Create handler and execute action to generate touch
-                        try {
-                            $handler = $this->actionHandlerFactory->create($action);
-                            $handler->setWorkflowExecution($execution);
-                            $result = $handler->execute($contact, $parameters);
-                            
-                            $actionExecution->update([
-                                'result' => $result,
-                            ]);
-                        } catch (\Exception $e) {
-                            // If handler execution fails, mark as failed
-                            $actionStatus = WorkflowActionExecution::STATUS_FAILED;
-                            $actionExecution->update([
-                                'status' => $actionStatus,
-                                'error' => $e->getMessage(),
-                            ]);
-                        }
-                    } elseif ($actionStatus === WorkflowActionExecution::STATUS_FAILED) {
-                        $actionExecution->update([
-                            'error' => $this->getRandomError(),
-                        ]);
-                    }
-                }
-
-                // Update execution results if completed
-                if ($execution->status === WorkflowExecution::STATUS_COMPLETED) {
-                    $execution->update([
-                        'results' => [
-                            'completed_at' => $execution->updated_at->toIso8601String(),
-                            'action_count' => $execution->actionExecutions()->count(),
-                            'successful_actions' => $execution->actionExecutions()
-                                ->where('status', WorkflowActionExecution::STATUS_COMPLETED)
-                                ->count(),
-                        ],
-                    ]);
-                } elseif ($execution->status === WorkflowExecution::STATUS_FAILED) {
-                    $failedAction = $execution->actionExecutions()
-                        ->where('status', WorkflowActionExecution::STATUS_FAILED)
-                        ->first();
-                    
-                    $execution->update([
-                        'error' => $failedAction ? $failedAction->error : 'Unknown error',
-                    ]);
+                // Start the workflow execution to create action executions
+                try {
+                    $execution->start();
+                    $this->command->info("  - Started execution {$execution->id}");
+                } catch (\Exception $e) {
+                    $this->command->error("  - Failed to start execution {$execution->id}: " . $e->getMessage());
                 }
             }
         }

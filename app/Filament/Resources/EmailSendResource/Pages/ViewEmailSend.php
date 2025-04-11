@@ -53,7 +53,7 @@ class ViewEmailSend extends ViewRecord
                         RepeatableEntry::make('clicks')
                             ->schema([
                                 TextEntry::make('link_url')
-                                    ->url(),
+                                    ->url(fn ($record) => $record->link_url),
                                 TextEntry::make('clicked_at')
                                     ->dateTime(),
                                 TextEntry::make('device_type'),

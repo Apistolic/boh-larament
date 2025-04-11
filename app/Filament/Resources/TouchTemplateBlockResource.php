@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TouchTemplateBlockResource extends BaseResource
@@ -48,7 +49,43 @@ class TouchTemplateBlockResource extends BaseResource
 
                 static::getPreviewSection('html_content')
                     ->extraAttributes(['class' => 'mt-4'])
-                    ->description('Use {{ block.variable_name }} for variables. You can also include other blocks using {{ block.block_slug }}'),
+                    ->description('Use {{ block.variable_name }} for variables. You can also include other blocks using {{ block.block_slug }}')
+                    ->schema([
+                        Forms\Components\Tabs::make('content_tabs')
+                            ->tabs([
+                                Forms\Components\Tabs\Tab::make('HTML Code')
+                                    ->schema([
+                                        Forms\Components\Textarea::make('html_content')
+                                            ->label('HTML Content')
+                                            ->required()
+                                            ->rows(20)
+                                            ->default(fn ($record) => $record?->formatted_html)
+                                            ->live()
+                                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                                $set('preview_content', $state);
+                                            })
+                                            ->columnSpanFull()
+                                            ->extraAttributes(['class' => 'font-mono']),
+
+                                        Forms\Components\Hidden::make('preview_content')
+                                            ->default(fn ($record) => $record?->html_content),
+                                    ]),
+
+                                Forms\Components\Tabs\Tab::make('Display Preview')
+                                    ->schema([
+                                        Forms\Components\Placeholder::make('preview')
+                                            ->label('Preview')
+                                            ->content(fn (Forms\Get $get) => new \Illuminate\Support\HtmlString($get('html_content')))
+                                            ->columnSpanFull(),
+                                    ]),
+                            ])
+                            ->persistTabInQueryString(),
+
+                        Forms\Components\ViewField::make('image_list')
+                            ->view('filament.components.html-image-list')
+                            ->columnSpanFull()
+                            ->dehydrated(false),
+                    ]),
 
                 Forms\Components\Section::make('Plain Text Version')
                     ->schema([
